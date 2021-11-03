@@ -70,7 +70,7 @@ Here is a part of the stop dictionary, showing just one stop:
        }
     }
 
-An input file in the expected format is [`tramstops.json`](../data/tramstops.json).
+An input file in the expected format is [`tramstops.json`](../../data/tramstops.json).
 The function involves an easy conversion using the `json` library.
 
 `build_tram_lines(lines)`, building a **line dictionary**, where
@@ -92,7 +92,7 @@ Here is an example:
     }
 	
 An input file in the expected format is
-[`tramlines.txt`](../data/tramlines.txt).
+[`tramlines.txt`](../../data/tramlines.txt).
 It is a textual representation of timetables for each line, looking as
 follows:
 
@@ -115,7 +115,7 @@ We want to store these transition times in a non-redundant way, under the follow
   - the transition time from B to A is the same as from A to B
 
 Hence, we don't want to add transition times to the line dictionary, because this would lead to storing redundant information.
-Instead, when reading the file [`tramlines.txt`](../data/tramlines.txt), we simultaneously build a **time dictionary**, where
+Instead, when reading the file [`tramlines.txt`](../../data/tramlines.txt), we simultaneously build a **time dictionary**, where
 
   - keys are stop names
   - values are dictionaries from stop names to numbers of minutes
