@@ -13,6 +13,9 @@ def build_tram_stops(jsonobject):
     return stop_dictionary
 
 
-# "C:/Users/Milvi/PycharmProjects/laboration-1/data/tramstops.json"
-with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramstops.json", 'r') as file:
-    build_tram_stops(file)
+try:
+    with open("data/tramstops.json", 'r') as file:
+        build_tram_stops(file)
+except FileNotFoundError:
+    with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramstops.json", 'r') as file:
+        build_tram_stops(file)
