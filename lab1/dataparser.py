@@ -13,6 +13,7 @@ def build_tram_stops(jsonobject):
     return stop_dictionary
 
 
+# Temporary solution, since PyCharm file system is a struggle
 try:
     with open("data/tramstops.json", 'r') as file:
         build_tram_stops(file)
