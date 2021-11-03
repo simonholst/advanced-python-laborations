@@ -38,21 +38,25 @@ def return_stops_for_line(line):
 
 # Temporary solution, since PyCharm file system is a struggle
 def create_tram_stops():
-    try:
-        with open("data/tramstops.json", 'r') as file:
-            build_tram_stops(file)
-    except FileNotFoundError:
-        with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramstops.json", 'r') as file:
-            build_tram_stops(file)
+    with open("../data/tramstops.json", 'r') as file:
+        build_tram_stops(file)
+    # try:
+    #     with open("data/tramstops.json", 'r') as file:
+    #         build_tram_stops(file)
+    # except FileNotFoundError:
+    #     with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramstops.json", 'r') as file:
+    #         build_tram_stops(file)
 
 
 def create_tram_lines():
-    try:
-        with open("data/tramlines.txt", 'r') as file:
-            build_tram_lines(file)
-    except FileNotFoundError:
-        with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramlines.txt", 'r') as file:
-            build_tram_lines(file)
+    with open("../data/tramstops.json", 'r') as file:
+        build_tram_lines(file)
+    # try:
+    #     with open("data/tramlines.txt", 'r') as file:
+    #         build_tram_lines(file)
+    # except FileNotFoundError:
+    #     with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramlines.txt", 'r') as file:
+    #         build_tram_lines(file)
 
 
 create_tram_lines()
