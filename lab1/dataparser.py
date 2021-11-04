@@ -2,15 +2,9 @@ import json
 
 
 def build_tram_stops(jsonobject):
-    unparsed_tram_stops = json.load(jsonobject)
-    stop_dictionary = dict()
-    for stop in unparsed_tram_stops:
-        stop_dictionary[stop] = {
-            'lat': unparsed_tram_stops[stop]["position"][0],
-            'lon': unparsed_tram_stops[stop]["position"][1]
-        }
-    print(stop_dictionary["Korsvägen"])
-    return stop_dictionary
+    stops = json.load(jsonobject)
+    return {stop: {'lat': stops[stop]["position"][0], 'lon': stops[stop]["position"][1]} for stop in stops}
+
 
 
 def build_tram_lines(lines):
@@ -23,7 +17,6 @@ def build_tram_lines(lines):
     line_dict = dict()
     for line in tram_lines:
         line = line.strip()  # Removes any leading spaces, see line 10 in tramlines.txt
-        # TODO line below only works for lines with one digit (0-9) need to handle bigger numbers as well
         line_dict[find_line_number(line)] = return_stops_for_line(line)
 
     print(line_dict.keys())
