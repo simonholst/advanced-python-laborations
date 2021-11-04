@@ -16,11 +16,12 @@ def build_tram_stops(jsonobject):
 def build_tram_lines(lines):
     tram_lines = lines.read()
     tram_lines = tram_lines.split("\n\n")
-    del tram_lines[-1]  # TODO this could possibly delete the last line if file doesn't have empty space at the end 
+    # TODO this could possibly delete the last line if file doesn't have empty space at the end
+    del tram_lines[-1]
 
     line_dict = dict()
     for line in tram_lines:
-        line = line.strip() # Removes any leading spaces, see line 10 in tramlines.txt
+        line = line.strip()  # Removes any leading spaces, see line 10 in tramlines.txt
         # TODO line below only works for lines with one digit (0-9) need to handle bigger numbers as well
         line_dict[line[0]] = return_stops_for_line(line)
 
@@ -52,7 +53,7 @@ def create_tram_stops():
 
 
 def create_tram_lines():
-    path = os.path.join('..', 'data', 'tramlines.txt')
+    path = os.path.join('data', 'tramlines.txt')
     print(path)
     with open(path, 'r') as file:
         build_tram_lines(file)
@@ -63,4 +64,6 @@ def create_tram_lines():
     #     with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramlines.txt", 'r') as file:
     #         build_tram_lines(file)
 
+
+print(os.getcwd())
 create_tram_lines()
