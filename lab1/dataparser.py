@@ -17,7 +17,8 @@ def build_tram_lines(lines):
     tram_lines = lines.read()
     tram_lines = tram_lines.split("\n\n")
     # TODO this could possibly delete the last line if file doesn't have empty space at the end
-    del tram_lines[-1]
+    if not tram_lines[-1]:
+        del tram_lines[-1]
 
     line_dict = dict()
     for line in tram_lines:
