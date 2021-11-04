@@ -10,17 +10,19 @@ def build_tram_stops(jsonobject):
             'lat': unparsed_tram_stops[stop]["position"][0],
             'lon': unparsed_tram_stops[stop]["position"][1]
         }
+    print(stop_dictionary["Korsvägen"])
     return stop_dictionary
 
 
 def build_tram_lines(lines):
     tram_lines = lines.read()
     tram_lines = tram_lines.split("\n\n")
-    del tram_lines[-1]  # TODO this could possibly delete the last line if file doesn't have empty space at the end 
+    # TODO this could possibly delete the last line if file doesn't have empty space at the end
+    del tram_lines[-1]
 
     line_dict = dict()
     for line in tram_lines:
-        line = line.strip() # Removes any leading spaces, see line 10 in tramlines.txt
+        line = line.strip()  # Removes any leading spaces, see line 10 in tramlines.txt
         # TODO line below only works for lines with one digit (0-9) need to handle bigger numbers as well
         line_dict[line[0]] = return_stops_for_line(line)
 
@@ -41,8 +43,7 @@ def return_stops_for_line(line):
 
 # Temporary solution, since PyCharm file system is a struggle
 def create_tram_stops():
-    with open("tramstops.json", 'r') as file:
-        build_tram_stops(file)
+    apply_func_to_file(build_tram_stops, "data/tramstops.json")
     # try:
     #     with open("data/tramstops.json", 'r') as file:
     #         build_tram_stops(file)
@@ -84,4 +85,6 @@ def apply_func_to_file(func, path):
         with open('../' + path, 'r') as file:
             func(file)
 
+
+create_tram_stops()
 create_tram_lines()
