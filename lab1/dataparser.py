@@ -1,4 +1,5 @@
 import json
+import os
 
 
 def build_tram_stops(jsonobject):
@@ -23,7 +24,7 @@ def build_tram_lines(lines):
         # TODO line below only works for lines with one digit (0-9) need to handle bigger numbers as well
         line_dict[line[0]] = return_stops_for_line(line)
 
-    # print(line_dict["13"])
+    print(line_dict["1"])
 
 
 def return_stops_for_line(line):
@@ -51,7 +52,9 @@ def create_tram_stops():
 
 
 def create_tram_lines():
-    with open("tramlines.txt", 'r') as file:
+    path = os.path.join('..', 'data', 'tramlines.txt')
+    print(path)
+    with open(path, 'r') as file:
         build_tram_lines(file)
     # try:
     #     with open("data/tramlines.txt", 'r') as file:
