@@ -23,9 +23,19 @@ def build_tram_lines(lines):
     for line in tram_lines:
         line = line.strip()  # Removes any leading spaces, see line 10 in tramlines.txt
         # TODO line below only works for lines with one digit (0-9) need to handle bigger numbers as well
-        line_dict[line[0]] = return_stops_for_line(line)
+        line_dict[find_line_number(line)] = return_stops_for_line(line)
 
-    print(line_dict["1"])
+    print(line_dict.keys())
+
+
+def find_line_number(line: str):
+    line_number = ''
+    i = 0
+    while True:
+        if line[i] == ':':
+            return line_number
+        line_number += line[i]
+        i += 1
 
 
 def return_stops_for_line(line):
