@@ -1,5 +1,4 @@
 import json
-import os
 
 
 def build_tram_stops(jsonobject):
