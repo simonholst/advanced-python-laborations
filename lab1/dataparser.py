@@ -22,18 +22,18 @@ def build_tram_times(tram_lines):
     stop_time_dict = dict()
     for line in tram_lines:
         stations = line.split("\n")
-        # remove first element, since it is the key value for the line
-        del stations[0]
         one_line_time_dict = dict()
         prev_station = None
         prev_time = None
-        for station in stations:
+        for station in stations[1:]:
             elements = str(station).split("  ")
             # Removes every element which is an empty string, preserving only station and time
-            station_name, station_time = list(filter(lambda a: a != '', elements))
+            station_name, station_time = list(
+                filter(lambda a: a != '', elements))
             station_time = station_time.strip()
             if prev_station:
-                one_line_time_dict[prev_station] = {station_name: calc_diff_in_time(station_time, prev_time)}
+                one_line_time_dict[prev_station] = {
+                    station_name: calc_diff_in_time(station_time, prev_time)}
 
             prev_station = station_name
             prev_time = station_time
@@ -54,10 +54,8 @@ def find_line_number(line: str):
 
 def stops_for_line(line):
     stations = line.split("\n")
-    # remove first element, since it is the key value for the line
-    del stations[0]
     stops = []
-    for station in stations:
+    for station in stations[1:]:
         elements = str(station).split("  ")
         # Removes every element which is an empty string, preserving only station and time
         elements = list(filter(lambda a: a != '', elements))
@@ -85,10 +83,6 @@ def calc_diff_in_time(now, previous):
     return (int(mins100) - int(prev_mins100)) * 100 + (int(mins) - int(prev_mins))
 
 
-
-
-
-
 def create_tram_stops():
     apply_func_to_file(build_tram_stops, "data/tramstops.json")
 
@@ -111,6 +105,7 @@ def create_tram_lines():
     # with open(path, 'r') as file:
     #     build_tram_lines(file)
 
+
 def create_tram_lines_and_times():
     apply_func_to_file(build_tram_lines_and_times, "data/tramlines.txt")
 
@@ -126,5 +121,5 @@ def apply_func_to_file(func, path):
 
 create_tram_lines_and_times()
 
-#create_tram_stops()
-#create_tram_lines()
+# create_tram_stops()
+# create_tram_lines()
