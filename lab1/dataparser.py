@@ -52,15 +52,36 @@ def create_tram_stops():
 
 
 def create_tram_lines():
-    path = os.path.join('..', 'data', 'tramlines.txt')
-    print(path)
-    with open(path, 'r') as file:
-        build_tram_lines(file)
+    apply_func_to_file(build_tram_lines, 'data/tramlines.txt')
+
+    # path = os.getcwd()
+    # paths = path.split("\\")
+    # if len(paths) < 1:
+    #     paths = path.split("/")
+    #
+    # if "lab1" in path:
+    #     paths.pop(-1)
+    #
+    # paths.append('data')
+    # paths.append('tramlines.txt')
+    # path = '/'.join(paths)
+    #
+    # with open(path, 'r') as file:
+    #     build_tram_lines(file)
     # try:
     #     with open("data/tramlines.txt", 'r') as file:
     #         build_tram_lines(file)
     # except FileNotFoundError:
-    #     with open("C:/Users/Milvi/PycharmProjects/laboration-1/data/tramlines.txt", 'r') as file:
+    #     with open("../data/tramlines.txt", 'r') as file:
     #         build_tram_lines(file)
+
+
+def apply_func_to_file(func, path):
+    try:
+        with open(path, 'r') as file:
+            func(file)
+    except FileNotFoundError:
+        with open('../' + path, 'r') as file:
+            func(file)
 
 create_tram_lines()
