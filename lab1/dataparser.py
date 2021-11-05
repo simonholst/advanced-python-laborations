@@ -119,7 +119,11 @@ def apply_func_to_file(func, path):
             return func(file)
 
 
-create_tram_lines_and_times()
+if __name__ == "__main__":
+    create_tram_lines_and_times()
 
 # create_tram_stops()
 # create_tram_lines()
+
+
+
