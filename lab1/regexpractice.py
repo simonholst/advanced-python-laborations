@@ -18,7 +18,7 @@ def find_times(expr):
 
 
 def find_station_names(expr):
-    return regex.findall(r"[a-öA-Ö]+ ?[a-öA-Ö]+", expr)
+    return regex.findall(r"[a-öA-Ö]+ ?[a-öA-Ö]+ ?[a-öA-Ö]+", expr)
     # + matches the previous token between one and unlimited times
     # ? matches the previous token between zero and one times
     # a-ö matches a single character in the range between a (index 97) and ö (index 246) (case sensitive)
@@ -26,12 +26,12 @@ def find_station_names(expr):
 
 
 def stations_and_times_dict(expr):
-    pattern = regex.compile(r"([a-ö]+ ?[a-ö]+ ?[a-ö]+) *(\d\d:\d\d)", flags=regex.IGNORECASE)  # flag = case insensitive
+    pattern = regex.compile(r"((?:[a-ö]+ ?)+\S) *(\d\d:\d\d)", flags=regex.IGNORECASE)  # flag = case insensitive
     return dict(pattern.findall(expr))
 
 
 def stations_and_times_list(expr):
-    pattern = regex.compile(r"([a-ö]+ ?[a-ö]+ ?[a-ö]+) *(\d\d:\d\d)", flags=regex.IGNORECASE)  # flag = case insensitive
+    pattern = regex.compile(r"((?:[a-ö]+ ?)+\S) *(\d\d:\d\d)", flags=regex.IGNORECASE)  # flag = case insensitive
     return pattern.findall(expr)
 
 
