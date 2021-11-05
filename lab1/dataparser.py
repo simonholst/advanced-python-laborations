@@ -1,4 +1,5 @@
 import json
+import pprint
 
 
 def build_tram_stops(json_object):
@@ -112,15 +113,76 @@ def create_tram_lines_and_times():
 
 def apply_func_to_file(func, path):
     try:
-        with open(path, 'r') as file:
+        with open(path, 'r', encoding="utf-8") as file:
             return func(file)
     except FileNotFoundError:
-        with open('../' + path, 'r') as file:
+        with open('../' + path, 'r', encoding="utf-8") as file:
             return func(file)
+
+
+
+####################### REGEX TEST ########################
+
+def create_tram_time_lines_regex():
+    apply_func_to_file(regex_prep, "data/tramlines.txt")
+
+
+def regex_prep(lines):
+    tram_lines = lines.read()
+    tram_lines = tram_lines.split("\n\n")
+    if not tram_lines[-1]:
+        del tram_lines[-1]
+
+    build_tram_times_regex(tram_lines)
+
+
+def build_tram_times_regex(tram_lines):
+    '''
+    The dictionary comprehension is pretty hard to understand so should probably be rewritten, i'll explain in person later
+    What it does is every iteration it creates a dictionary with a line number as key, whose value is another dictionary
+    who has the time between station1 and station2 as value
+
+    <line number>:
+        <station 1>:
+            <station 2>: <time between station 1 and 2>
+
+        <station 2>:
+            <station 3>: <time between station 2 and 3>
+
+        <station 3>:
+            <station 4>: <time between station 3 and 4>
+
+    that is then added to a main dictionary stop_time_dict
+
+    stop_time_dict:
+        <line 1>:
+            <station 1>:
+                <station 2>: <time between station 1 and 2>
+            ...
+
+        <line 2>:
+            <station 1>:
+                <station 2>: <time between station 1 and 2>
+            ...
+
+        <line 3>:
+            <station 1>:
+                <station 2>: <time between station 1 and 2>
+            ...
+    '''
+    from regexpractice import stations_and_times_list
+    stop_time_dict = dict()
+    for line in tram_lines:
+        time_list = stations_and_times_list(line)
+        part_of_dict = {find_line_number(line): {time_list[i][0]: {time_list[i+1][0]: calc_diff_in_time(time_list[i+1][1], time_list[i][1])} for i in range(len(time_list) - 2)}}
+        stop_time_dict.update(part_of_dict)
+
+    pprint.pprint(stop_time_dict)
 
 
 if __name__ == "__main__":
     create_tram_lines_and_times()
+    #create_tram_time_lines_regex() # Uncomment to create tram timeline with regex
 
 # create_tram_stops()
 # create_tram_lines()
