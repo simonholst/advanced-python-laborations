@@ -25,14 +25,12 @@ def find_station_names(expr):
 
 
 def stations_and_times_dict(expr):
-    pattern = re.compile(r"([a-ö]+ ?[a-ö]+ ?[a-ö]+) *(\d\d:\d\d)",
-                         flags=re.IGNORECASE)  # flag = case insensitive
+    pattern = re.compile(r"((?:[a-öA-Ö]+ ?)+\S) *(\d\d:\d\d)", flags=re.IGNORECASE)  # flag = case insensitive
     return dict(pattern.findall(expr))
 
 
 def stations_and_times_list(expr):
-    pattern = re.compile(r"([a-ö]+ ?[a-ö]+ ?[a-ö]+) *(\d\d:\d\d)",
-                         flags=re.IGNORECASE)  # flag = case insensitive
+    pattern = re.compile(r"((?:[a-öA-Ö]+ ?)+\S) *(\d\d:\d\d)", flags=re.IGNORECASE)  # flag = case insensitive
     return pattern.findall(expr)
 
 
