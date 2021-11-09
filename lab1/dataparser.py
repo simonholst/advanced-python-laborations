@@ -1,6 +1,6 @@
 import json
 import re
-from typing import List
+from typing import List, Tuple
 
 
 def build_tram_stops(json_object) -> dict:
@@ -12,7 +12,7 @@ def build_tram_lines(tram_lines: List[str]) -> dict:
     return {find_line_number(line): create_stops_for_line(line) for line in tram_lines}
 
 
-def build_tram_lines_and_times(text_file) -> dict:
+def build_tram_lines_and_times(text_file) -> Tuple[dict, dict]:
     tram_lines = text_file.read()
     tram_lines = tram_lines.split("\n\n")
     if not tram_lines[-1]:
@@ -21,16 +21,7 @@ def build_tram_lines_and_times(text_file) -> dict:
 
 
 def find_line_number(line: str) -> str:
-    # TODO regex ^\d+:
-    line.strip()
-    line_number = ''
-    i = 0
-    while True:
-        if line[i] == ':':
-            return line_number
-        if line[i].isdigit():
-            line_number += line[i]
-        i += 1
+    return re.compile(r" *(\d+):\s").search(line).groups()[0]
 
 
 def create_stops_for_line(line: str) -> List[str]:
@@ -74,8 +65,12 @@ def build_tram_times(tram_lines: List[str]) -> dict:
         for i in range(len(station_time_tuples) - 1):
             station = station_time_tuples[i][0]
             next_station = station_time_tuples[i+1][0]
-            value = calc_diff_in_time(
-                station_time_tuples[i+1][1], station_time_tuples[i][1])
+            value = calc_diff_in_time(station_time_tuples[i+1][1], station_time_tuples[i][1])
+
+            # Avoid duplicates
+            if next_station in stop_time_dict and station in stop_time_dict[next_station]:
+                continue
+
             if station not in stop_time_dict:
                 stop_time_dict[station] = {next_station: value}
             else:
