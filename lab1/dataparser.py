@@ -34,16 +34,7 @@ def find_line_number(line: str) -> str:
 
 
 def create_stops_for_line(line: str) -> List[str]:
-    stations = line.split("\n")
-    # remove first element, since it is the key value for the line
-    del stations[0]
-    stops = []
-    for station in stations:
-        elements = str(station).split("  ")
-        station_name = elements[0]
-        stops.append(station_name)
-
-    return stops
+    return re.compile(r"(?:[a-ö]+ ?)+\S", flags=re.IGNORECASE).findall(line)
 
 
 def calc_diff_in_time(now: str, previous: str) -> int:
@@ -61,7 +52,7 @@ def create_tram_lines_and_times() -> dict:
     return apply_func_to_file(build_tram_lines_and_times, "data/tramlines.txt")
 
 
-def apply_func_to_file(func: function, path: str):
+def apply_func_to_file(func, path: str):
     try:
         with open(path, 'r', encoding="utf-8") as file:
             return func(file)
@@ -72,9 +63,7 @@ def apply_func_to_file(func: function, path: str):
 
 def stations_and_times_list(expr: str) -> List[tuple]:
     # flag = case insensitive
-    pattern = re.compile(
-        r"((?:[a-öA-Ö]+ ?)+\S) *(\d\d:\d\d)", flags=re.IGNORECASE)
-    return pattern.findall(expr)
+    return re.compile(r"((?:[a-öA-Ö]+ ?)+\S) *(\d\d:\d\d)", flags=re.IGNORECASE).findall(expr)
 
 
 def build_tram_times(tram_lines: List[str]) -> dict:
