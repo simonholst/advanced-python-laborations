@@ -84,6 +84,22 @@ def build_tram_times(tram_lines: List[str]) -> dict:
     return stop_time_dict
 
 
+def lines_via_stops(somedicts, stop):
+    pass
+
+
+def lines_between_stops(somedicts, stop1, stop2):
+    pass
+
+
+def time_between_stops(somedicts, line, stop1, stop2):
+    pass
+
+
+def distance_between_stops(somedicts, stop1, stop2):
+    pass
+
+
 def main():
     stops = create_tram_stops()
     lines, times = create_tram_lines_and_times()
