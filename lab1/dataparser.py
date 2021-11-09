@@ -85,7 +85,8 @@ def lines_via_stops(line_dict, stop):
     for line in line_dict:
         if stop in line_dict[line]:
             available_lines.append(line)
-    return available_lines.sort(key=int)
+    available_lines.sort(key=int)
+    return available_lines
 
 
 def lines_between_stops(line_dict, stop1, stop2):
@@ -93,32 +94,32 @@ def lines_between_stops(line_dict, stop1, stop2):
     for line in line_dict:
         if line in lines_via_stops(line_dict, stop1) and line in lines_via_stops(line_dict, stop2):
             available_lines.append(line)
-    return available_lines.sort(key=int)
+    available_lines.sort(key=int)
+    return available_lines
 
 
 def time_between_stops(time_dict, line: dict, stop1, stop2):
     # TODO Should rerun the method until valid values are given
-    if not line.keys[0] in lines_between_stops(line, stop1, stop2):
+    if not list(line)[0] in lines_between_stops(line, stop1, stop2):
         print("Both stops do not appear on the given line!")
         return -1
 
     time = 0
-    index1 = line[line.keys[0]].index(stop1)
-    index2 = line[line.keys[0]].index(stop2)
+    index1 = line[list(line)[0]].index(stop1)
+    index2 = line[list(line)[0]].index(stop2)
 
     if index1 > index2:
-        visited_stops = line[line.keys[0]][index2:index1 + 1]
+        visited_stops = line[list(line)[0]][index2:index1 + 1]
     elif index1 < index2:
-        visited_stops = line[line.keys[0]][index1:index2 + 1]
+        visited_stops = line[list(line)[0]][index1:index2 + 1]
     else:
         return time
 
-    for i in range(len(visited_stops - 1)):
-        if visited_stops[i] in time_dict:
+    for i in range(len(visited_stops) - 1):
+        try:
             time += time_dict[visited_stops[i]][visited_stops[i + 1]]
-        elif visited_stops[i + 1] in time_dict:
-            time += time_dict[visited_stops[i + 1][visited_stops[i]]]
-
+        except KeyError:
+            time += time_dict[visited_stops[i + 1]][visited_stops[i]]
     return time
 
 
