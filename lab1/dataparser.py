@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from math import pi, sqrt, cos
 from typing import List, Tuple
@@ -81,6 +82,18 @@ def build_tram_times(tram_lines: List[str]) -> dict:
     return stop_time_dict
 
 
+def build_tram_network():
+    # FIXME Function is supposed to take in parameters so we need to refactor the methods being called as well
+    base = os.path.dirname(os.getcwd())
+    path = os.path.join(base, 'data', 'tramnetwork.json')
+    with open(path, 'w', encoding='utf-8') as f:
+        stops = {'stops': create_tram_stops()}
+        lines, times = create_tram_lines_and_times()
+        lines = {'lines': lines}
+        times = {'times': times}
+        f.write(json.dumps({**stops, **lines, **times}, indent=4))
+
+
 def lines_via_stops(line_dict, stop):
     available_lines = list()
     for line in line_dict:
@@ -154,3 +167,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
