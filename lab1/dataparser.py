@@ -1,5 +1,6 @@
 import json
 import re
+from math import sqrt, cos
 from typing import List, Tuple
 
 
@@ -124,13 +125,24 @@ def time_between_stops(time_dict, line: dict, stop1, stop2):
 
 
 def distance_between_stops(stop_dict, stop1, stop2):
-
-    pass
+    R = 6371.009
+    d_lat = abs(float(stop_dict[stop1]["lat"]) -
+                float(stop_dict[stop2]["lat"]))
+    lat_m = (float(stop_dict[stop1]["lat"]) +
+             float(stop_dict[stop2]["lat"])) / 2
+    d_lon = abs(float(stop_dict[stop1]["lon"]) -
+                float(stop_dict[stop2]["lon"]))
+    return R * sqrt((d_lat**2) + (cos(lat_m) * d_lon)**2)
 
 
 def main():
     stops = create_tram_stops()
     lines, times = create_tram_lines_and_times()
+    distance = distance_between_stops(stops, "Brunnsparken", "Chalmers")
+    print(f"distance between Brunnsparken and Chalmers is: {distance}")
+
+    distance = distance_between_stops(stops, "Chalmers", "Brunnsparken")
+    print(f"distance between Chalmers and Brunnsparken is: {distance}")
 
 
 if __name__ == "__main__":
