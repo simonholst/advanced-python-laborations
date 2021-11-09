@@ -1,6 +1,6 @@
 import json
 import re
-from math import sqrt, cos
+from math import pi, sqrt, cos
 from typing import List, Tuple
 
 
@@ -127,11 +127,11 @@ def time_between_stops(time_dict, line: dict, stop1, stop2):
 def distance_between_stops(stop_dict, stop1, stop2):
     R = 6371.009
     d_lat = abs(float(stop_dict[stop1]["lat"]) -
-                float(stop_dict[stop2]["lat"]))
-    lat_m = (float(stop_dict[stop1]["lat"]) +
-             float(stop_dict[stop2]["lat"])) / 2
+                float(stop_dict[stop2]["lat"])) * (pi / 180)
+    lat_m = ((float(stop_dict[stop1]["lat"]) +
+             float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
     d_lon = abs(float(stop_dict[stop1]["lon"]) -
-                float(stop_dict[stop2]["lon"]))
+                float(stop_dict[stop2]["lon"])) * (pi / 180)
     return R * sqrt((d_lat**2) + (cos(lat_m) * d_lon)**2)
 
 
@@ -143,6 +143,13 @@ def main():
 
     distance = distance_between_stops(stops, "Chalmers", "Brunnsparken")
     print(f"distance between Chalmers and Brunnsparken is: {distance}")
+
+    print()
+    distance = distance_between_stops(stops, "Korsvägen", "Chalmers")
+    print(f"distance between Korsvägen and Chalmers is: {distance}")
+
+    distance = distance_between_stops(stops, "Chalmers", "Korsvägen")
+    print(f"distance between Chalmers and Korsvägen is: {distance}")
 
 
 if __name__ == "__main__":
