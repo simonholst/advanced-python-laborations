@@ -65,7 +65,8 @@ def build_tram_times(tram_lines: List[str]) -> dict:
         for i in range(len(station_time_tuples) - 1):
             station = station_time_tuples[i][0]
             next_station = station_time_tuples[i+1][0]
-            value = calc_diff_in_time(station_time_tuples[i+1][1], station_time_tuples[i][1])
+            value = calc_diff_in_time(
+                station_time_tuples[i+1][1], station_time_tuples[i][1])
 
             # Avoid duplicates
             if next_station in stop_time_dict and station in stop_time_dict[next_station]:
@@ -79,19 +80,50 @@ def build_tram_times(tram_lines: List[str]) -> dict:
     return stop_time_dict
 
 
-def lines_via_stops(somedicts, stop):
-    pass
+def lines_via_stops(line_dict, stop):
+    available_lines = list()
+    for line in line_dict:
+        if stop in line_dict[line]:
+            available_lines.append(line)
+    return available_lines.sort(key=int)
 
 
-def lines_between_stops(somedicts, stop1, stop2):
-    pass
+def lines_between_stops(line_dict, stop1, stop2):
+    available_lines = list()
+    for line in line_dict:
+        if line in lines_via_stops(line_dict, stop1) and line in lines_via_stops(line_dict, stop2):
+            available_lines.append(line)
+    return available_lines.sort(key=int)
 
 
-def time_between_stops(somedicts, line, stop1, stop2):
-    pass
+def time_between_stops(time_dict, line: dict, stop1, stop2):
+    # TODO Should rerun the method until valid values are given
+    if not line.keys[0] in lines_between_stops(line, stop1, stop2):
+        print("Both stops do not appear on the given line!")
+        return -1
+
+    time = 0
+    index1 = line[line.keys[0]].index(stop1)
+    index2 = line[line.keys[0]].index(stop2)
+
+    if index1 > index2:
+        visited_stops = line[line.keys[0]][index2:index1 + 1]
+    elif index1 < index2:
+        visited_stops = line[line.keys[0]][index1:index2 + 1]
+    else:
+        return time
+
+    for i in range(len(visited_stops - 1)):
+        if visited_stops[i] in time_dict:
+            time += time_dict[visited_stops[i]][visited_stops[i + 1]]
+        elif visited_stops[i + 1] in time_dict:
+            time += time_dict[visited_stops[i + 1][visited_stops[i]]]
+
+    return time
 
 
-def distance_between_stops(somedicts, stop1, stop2):
+def distance_between_stops(stop_dict, stop1, stop2):
+
     pass
 
 
