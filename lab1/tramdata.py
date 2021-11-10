@@ -118,20 +118,21 @@ def lines_between_stops(line_dict, stop1, stop2):
     return available_lines
 
 
-def time_between_stops(time_dict, line_dict, line: dict, stop1, stop2):
+def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
     # TODO Should rerun the method until valid values are given
-    if not list(line)[0] in lines_between_stops(line_dict, stop1, stop2):
+    if not line_number in lines_between_stops(line_dict, stop1, stop2):
         print("Both stops do not appear on the given line!")
         return -1
+    line = line_dict[line_number]
 
     time = 0
-    index1 = line[list(line)[0]].index(stop1)
-    index2 = line[list(line)[0]].index(stop2)
+    index1 = line.index(stop1)
+    index2 = line.index(stop2)
 
     if index1 > index2:
-        visited_stops = line[list(line)[0]][index2:index1 + 1]
+        visited_stops = line[index2:index1 + 1]
     elif index1 < index2:
-        visited_stops = line[list(line)[0]][index1:index2 + 1]
+        visited_stops = line[index1:index2 + 1]
     else:
         return time
 
@@ -151,7 +152,7 @@ def distance_between_stops(stop_dict, stop1, stop2):
              float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
     d_lon = abs(float(stop_dict[stop1]["lon"]) -
                 float(stop_dict[stop2]["lon"])) * (pi / 180)
-    return R * sqrt((d_lat**2) + (cos(lat_m) * d_lon)**2)
+    return round(R * sqrt((d_lat**2) + (cos(lat_m) * d_lon)**2), 3)
 
 
 def dialogue(tramnetwork_file_path):
@@ -169,10 +170,9 @@ def dialogue(tramnetwork_file_path):
                 tram_network["lines"], command[1], command[3]))
         elif command[0].lower() == "time":
             print(time_between_stops(
-                tram_network["times"], tram_network["lines"], tram_network["lines"][command[2]], command[4], command[6]))
+                tram_network["times"], tram_network["lines"], command[2], command[4], command[6]))
         elif command[0].lower() == "distance":
-            print(distance_between_stops(
-                tram_network["stops"]), command[2], command[4])
+            print(distance_between_stops(tram_network["stops"], command[2], command[4]))
 
 
 def main():
