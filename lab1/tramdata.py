@@ -5,8 +5,9 @@ import sys
 from math import pi, sqrt, cos
 from typing import List, Tuple
 
-TRAMLINES = 'data/tramlines.txt'
-TRAMSTOPS = 'data/tramstops.json'
+TRAMLINES = 'tramlines.txt'
+TRAMSTOPS = 'tramstops.json'
+TRAMNETWORK = 'tramnetwork.json'
 
 
 def build_tram_stops(json_object) -> dict:
@@ -86,15 +87,16 @@ def build_tram_times(tram_lines: List[str]) -> dict:
 
 
 def build_tram_network(stops_file_path, lines_file_path):
-    with open(get_path('data', 'tramnetwork.json'), 'w', encoding='utf-8') as f:
+    with open(get_data_path('tramnetwork.json'), 'w', encoding='utf-8') as f:
         stops = create_tram_stops(stops_file_path)
         lines, times = create_tram_lines_and_times(lines_file_path)
-        f.write(json.dumps({**{'stops': stops}, **{'lines': lines}, **{'times': times}}, indent=4))
+        f.write(json.dumps({**{'stops': stops}, **
+                {'lines': lines}, **{'times': times}}, indent=4))
 
 
-def get_path(*args):
+def get_data_path(*args):
     base = os.path.dirname(os.getcwd())
-    path = os.path.join(base, *args)
+    path = os.path.join(base, 'data', *args)
     return path
 
 
@@ -116,9 +118,9 @@ def lines_between_stops(line_dict, stop1, stop2):
     return available_lines
 
 
-def time_between_stops(time_dict, line: dict, stop1, stop2):
+def time_between_stops(time_dict, line_dict, line: dict, stop1, stop2):
     # TODO Should rerun the method until valid values are given
-    if not list(line)[0] in lines_between_stops(line, stop1, stop2):
+    if not list(line)[0] in lines_between_stops(line_dict, stop1, stop2):
         print("Both stops do not appear on the given line!")
         return -1
 
@@ -152,16 +154,35 @@ def distance_between_stops(stop_dict, stop1, stop2):
     return R * sqrt((d_lat**2) + (cos(lat_m) * d_lon)**2)
 
 
+def dialogue(tramnetwork_file_path):
+    with open(get_data_path(tramnetwork_file_path), "r", encoding="utf-8") as f:
+        tram_network = json.load(f)
+
+    while(1):
+        command = input("> ").split(" ")
+        if command[0].lower() == "quit":
+            exit(0)
+        elif command[0].lower() == "via":
+            print(lines_via_stops(tram_network["lines"], command[1]))
+        elif command[0].lower() == "between":
+            print(lines_between_stops(
+                tram_network["lines"], command[1], command[3]))
+        elif command[0].lower() == "time":
+            print(time_between_stops(
+                tram_network["times"], tram_network["lines"], tram_network["lines"][command[2]], command[4], command[6]))
+        elif command[0].lower() == "distance":
+            print(distance_between_stops(
+                tram_network["stops"]), command[2], command[4])
+
+
 def main():
-    if sys.argv[1] == 'init':
-        print('Creating tram network...')
+    if 'init' in sys.argv:
+        print("Creating tram network...")
         build_tram_network(TRAMSTOPS, TRAMLINES)
         print('Tram network created!')
     else:
-        pass
+        dialogue(TRAMNETWORK)
 
 
 if __name__ == "__main__":
     main()
-
-
