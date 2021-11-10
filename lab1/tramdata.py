@@ -86,12 +86,16 @@ def build_tram_times(tram_lines: List[str]) -> dict:
 
 
 def build_tram_network(stops_file_path, lines_file_path):
-    base = os.path.dirname(os.getcwd())
-    path = os.path.join(base, 'data', 'tramnetwork.json')
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(get_path('data', 'tramnetwork.json'), 'w', encoding='utf-8') as f:
         stops = create_tram_stops(stops_file_path)
         lines, times = create_tram_lines_and_times(lines_file_path)
         f.write(json.dumps({**{'stops': stops}, **{'lines': lines}, **{'times': times}}, indent=4))
+
+
+def get_path(*args):
+    base = os.path.dirname(os.getcwd())
+    path = os.path.join(base, *args)
+    return path
 
 
 def lines_via_stops(line_dict, stop):
@@ -150,7 +154,9 @@ def distance_between_stops(stop_dict, stop1, stop2):
 
 def main():
     if sys.argv[1] == 'init':
+        print('Creating tram network...')
         build_tram_network(TRAMSTOPS, TRAMLINES)
+        print('Tram network created!')
     else:
         pass
 
