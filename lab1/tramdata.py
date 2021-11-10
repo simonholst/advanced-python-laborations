@@ -1,8 +1,12 @@
 import json
 import os
 import re
+import sys
 from math import pi, sqrt, cos
 from typing import List, Tuple
+
+TRAMLINES = 'data/tramlines.txt'
+TRAMSTOPS = 'data/tramstops.json'
 
 
 def build_tram_stops(json_object) -> dict:
@@ -37,12 +41,12 @@ def calc_diff_in_time(now: str, previous: str) -> int:
     return (int(mins100) - int(prev_mins100)) * 100 + (int(mins) - int(prev_mins))
 
 
-def create_tram_stops() -> dict:
-    return apply_func_to_file(build_tram_stops, "data/tramstops.json")
+def create_tram_stops(file_path: str) -> dict:
+    return apply_func_to_file(build_tram_stops, file_path)
 
 
-def create_tram_lines_and_times() -> dict:
-    return apply_func_to_file(build_tram_lines_and_times, "data/tramlines.txt")
+def create_tram_lines_and_times(file_path: str) -> dict:
+    return apply_func_to_file(build_tram_lines_and_times, file_path)
 
 
 def apply_func_to_file(func, path: str):
@@ -55,8 +59,7 @@ def apply_func_to_file(func, path: str):
 
 
 def stations_and_times_list(expr: str) -> List[tuple]:
-    # flag = case insensitive
-    return re.compile(r"((?:[a-öA-Ö]+ ?)+\S) *(\d\d:\d\d)", flags=re.IGNORECASE).findall(expr)
+    return re.compile(r"((?:[a-ö]+ ?)+\S) *(\d\d:\d\d)", flags=re.IGNORECASE).findall(expr)
 
 
 def build_tram_times(tram_lines: List[str]) -> dict:
@@ -82,16 +85,13 @@ def build_tram_times(tram_lines: List[str]) -> dict:
     return stop_time_dict
 
 
-def build_tram_network():
-    # FIXME Function is supposed to take in parameters so we need to refactor the methods being called as well
+def build_tram_network(stops_file_path, lines_file_path):
     base = os.path.dirname(os.getcwd())
     path = os.path.join(base, 'data', 'tramnetwork.json')
     with open(path, 'w', encoding='utf-8') as f:
-        stops = {'stops': create_tram_stops()}
-        lines, times = create_tram_lines_and_times()
-        lines = {'lines': lines}
-        times = {'times': times}
-        f.write(json.dumps({**stops, **lines, **times}, indent=4))
+        stops = create_tram_stops(stops_file_path)
+        lines, times = create_tram_lines_and_times(lines_file_path)
+        f.write(json.dumps({**{'stops': stops}, **{'lines': lines}, **{'times': times}}, indent=4))
 
 
 def lines_via_stops(line_dict, stop):
@@ -149,22 +149,13 @@ def distance_between_stops(stop_dict, stop1, stop2):
 
 
 def main():
-    stops = create_tram_stops()
-    lines, times = create_tram_lines_and_times()
-    distance = distance_between_stops(stops, "Brunnsparken", "Chalmers")
-    print(f"distance between Brunnsparken and Chalmers is: {distance}")
-
-    distance = distance_between_stops(stops, "Chalmers", "Brunnsparken")
-    print(f"distance between Chalmers and Brunnsparken is: {distance}")
-
-    print()
-    distance = distance_between_stops(stops, "Korsvägen", "Chalmers")
-    print(f"distance between Korsvägen and Chalmers is: {distance}")
-
-    distance = distance_between_stops(stops, "Chalmers", "Korsvägen")
-    print(f"distance between Chalmers and Korsvägen is: {distance}")
+    if sys.argv[1] == 'init':
+        build_tram_network(TRAMSTOPS, TRAMLINES)
+    else:
+        pass
 
 
 if __name__ == "__main__":
     main()
+
 
