@@ -2,7 +2,7 @@ import json
 import os
 import re
 import sys
-from lab1.invalidcommandexception import InvalidCommandException
+from invalidcommandexception import InvalidCommandException
 from math import pi, sqrt, cos
 from typing import List, Tuple
 from invalidcommandexception import InvalidCommandException
@@ -188,8 +188,6 @@ def dialogue(tramnetwork_file_path):
                 tram_network["stops"], args[0], args[1]))
 
 
-
-
 def is_valid_command(command):
     first_command = command[0].lower()
     if first_command == "quit":
@@ -210,17 +208,21 @@ def isc(command: str):
     if via:
         return via
 
-    between = re.findall(r"between ((?:[a-ö]+ ?)+) and ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+    between = re.findall(
+        r"between ((?:[a-ö]+ ?)+) and ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
     if between:
         return between
 
-    time = re.findall(r"time with (\d+) from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+    time = re.findall(
+        r"time with (\d+) from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
     if time:
         return time
 
-    distance = re.findall(r"distance from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+    distance = re.findall(
+        r"distance from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
     if distance:
         return distance
+
 
 def main():
     if 'init' in sys.argv:
