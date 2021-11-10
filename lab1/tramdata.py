@@ -2,6 +2,7 @@ import json
 import os
 import re
 import sys
+from lab1.invalidcommandexception import InvalidCommandException
 from math import pi, sqrt, cos
 from typing import List, Tuple
 from invalidcommandexception import InvalidCommandException
@@ -44,11 +45,13 @@ def calc_diff_in_time(now: str, previous: str) -> int:
 
 
 def create_tram_stops(file_path: str) -> dict:
-    return apply_func_to_file(build_tram_stops, file_path)
+    with open(get_data_path(TRAMSTOPS), 'r', encoding='utf-8') as f:
+        return build_tram_stops(f)
 
 
-def create_tram_lines_and_times(file_path: str) -> dict:
-    return apply_func_to_file(build_tram_lines_and_times, file_path)
+def create_tram_lines_and_times(file_path: str):
+    with open(get_data_path(TRAMLINES), 'r', encoding='utf-8') as f:
+        return build_tram_lines_and_times(f)
 
 
 def apply_func_to_file(func, path: str):
@@ -106,6 +109,7 @@ def lines_via_stops(line_dict, stop):
     for line in line_dict:
         if stop in line_dict[line]:
             available_lines.append(line)
+    # TODO raise / return 'no stations for that line' if none found
     available_lines.sort(key=int)
     return available_lines
 
@@ -155,9 +159,11 @@ def dialogue(tramnetwork_file_path):
         tram_network = json.load(f)
 
     while True:
-        command = input("> ").split(" ")
+        ip = input("> ")
+        command = ip.split(" ")
         try:
             cmd = is_valid_command(command)
+            args = isc(ip)[0]
         except InvalidCommandException as e:
             print(e)
             print("Sorry, try again!")
@@ -166,16 +172,22 @@ def dialogue(tramnetwork_file_path):
         if cmd == "q":
             exit(0)
         if cmd == "v":
-            print(lines_via_stops(tram_network["lines"], command[1]))
+            print(args)
+            print(lines_via_stops(tram_network["lines"], args))
         if cmd == "b":
+            print(args)
             print(lines_between_stops(
-                tram_network["lines"], command[1], command[3]))
+                tram_network["lines"], args[0], args[1]))
         if cmd == "t":
+            print(args)
             print(time_between_stops(
-                tram_network["times"], tram_network["lines"], command[2], command[4], command[6]))
+                tram_network["times"], tram_network["lines"], args[0], args[1], args[2]))
         if cmd == "d":
+            print(args)
             print(distance_between_stops(
-                tram_network["stops"], command[2], command[4]))
+                tram_network["stops"], args[0], args[1]))
+
+
 
 
 def is_valid_command(command):
@@ -192,6 +204,23 @@ def is_valid_command(command):
         return "d"
     raise InvalidCommandException(command[0])
 
+
+def isc(command: str):
+    via = re.findall(r"via ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+    if via:
+        return via
+
+    between = re.findall(r"between ((?:[a-ö]+ ?)+) and ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+    if between:
+        return between
+
+    time = re.findall(r"time with (\d+) from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+    if time:
+        return time
+
+    distance = re.findall(r"distance from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+    if distance:
+        return distance
 
 def main():
     if 'init' in sys.argv:
