@@ -70,9 +70,9 @@ def build_tram_times(tram_lines: List[str]) -> dict:
         station_time_tuples = stations_and_times_list(line)
         for i in range(len(station_time_tuples) - 1):
             station = station_time_tuples[i][0]
-            next_station = station_time_tuples[i+1][0]
+            next_station = station_time_tuples[i + 1][0]
             value = calc_diff_in_time(
-                station_time_tuples[i+1][1], station_time_tuples[i][1])
+                station_time_tuples[i + 1][1], station_time_tuples[i][1])
 
             # Avoid duplicates
             if next_station in stop_time_dict and station in stop_time_dict[next_station]:
@@ -91,7 +91,7 @@ def build_tram_network(stops_file_path, lines_file_path):
         stops = create_tram_stops(stops_file_path)
         lines, times = create_tram_lines_and_times(lines_file_path)
         f.write(json.dumps({**{'stops': stops}, **
-                {'lines': lines}, **{'times': times}}, indent=4))
+        {'lines': lines}, **{'times': times}}, indent=4))
 
 
 def get_data_path(*args):
@@ -119,22 +119,15 @@ def lines_between_stops(line_dict, stop1, stop2):
 
 
 def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
-    # TODO Should rerun the method until valid values are given
-    if not line_number in lines_between_stops(line_dict, stop1, stop2):
+    if line_number not in lines_between_stops(line_dict, stop1, stop2):
         print("Both stops do not appear on the given line!")
         return -1
     line = line_dict[line_number]
 
     time = 0
-    index1 = line.index(stop1)
-    index2 = line.index(stop2)
-
-    if index1 > index2:
-        visited_stops = line[index2:index1 + 1]
-    elif index1 < index2:
-        visited_stops = line[index1:index2 + 1]
-    else:
+    if line.index(stop1) == line.index(stop2):
         return time
+    visited_stops = line[min(line.index(stop1), line.index(stop2)):max(line.index(stop1), line.index(stop2)) + 1]
 
     for i in range(len(visited_stops) - 1):
         try:
@@ -146,31 +139,26 @@ def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
 
 def distance_between_stops(stop_dict, stop1, stop2):
     R = 6371.009
-    d_lat = abs(float(stop_dict[stop1]["lat"]) -
-                float(stop_dict[stop2]["lat"])) * (pi / 180)
-    lat_m = ((float(stop_dict[stop1]["lat"]) +
-             float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
-    d_lon = abs(float(stop_dict[stop1]["lon"]) -
-                float(stop_dict[stop2]["lon"])) * (pi / 180)
-    return round(R * sqrt((d_lat**2) + (cos(lat_m) * d_lon)**2), 3)
+    d_lat = abs(float(stop_dict[stop1]["lat"]) - float(stop_dict[stop2]["lat"])) * (pi / 180)
+    lat_m = ((float(stop_dict[stop1]["lat"]) + float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
+    d_lon = abs(float(stop_dict[stop1]["lon"]) - float(stop_dict[stop2]["lon"])) * (pi / 180)
+    return round(R * sqrt((d_lat ** 2) + (cos(lat_m) * d_lon) ** 2), 3)
 
 
 def dialogue(tramnetwork_file_path):
     with open(get_data_path(tramnetwork_file_path), "r", encoding="utf-8") as f:
         tram_network = json.load(f)
 
-    while(1):
+    while True:
         command = input("> ").split(" ")
         if command[0].lower() == "quit":
             exit(0)
         elif command[0].lower() == "via":
             print(lines_via_stops(tram_network["lines"], command[1]))
         elif command[0].lower() == "between":
-            print(lines_between_stops(
-                tram_network["lines"], command[1], command[3]))
+            print(lines_between_stops(tram_network["lines"], command[1], command[3]))
         elif command[0].lower() == "time":
-            print(time_between_stops(
-                tram_network["times"], tram_network["lines"], command[2], command[4], command[6]))
+            print(time_between_stops(tram_network["times"], tram_network["lines"], command[2], command[4], command[6]))
         elif command[0].lower() == "distance":
             print(distance_between_stops(tram_network["stops"], command[2], command[4]))
 
