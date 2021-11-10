@@ -4,6 +4,7 @@ import re
 import sys
 from math import pi, sqrt, cos
 from typing import List, Tuple
+from invalidcommandexception import InvalidCommandException
 
 TRAMLINES = 'tramlines.txt'
 TRAMSTOPS = 'tramstops.json'
@@ -91,7 +92,7 @@ def build_tram_network(stops_file_path, lines_file_path):
         stops = create_tram_stops(stops_file_path)
         lines, times = create_tram_lines_and_times(lines_file_path)
         f.write(json.dumps({**{'stops': stops}, **
-        {'lines': lines}, **{'times': times}}, indent=4))
+                            {'lines': lines}, **{'times': times}}, indent=4))
 
 
 def get_data_path(*args):
@@ -127,7 +128,8 @@ def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
     time = 0
     if line.index(stop1) == line.index(stop2):
         return time
-    visited_stops = line[min(line.index(stop1), line.index(stop2)):max(line.index(stop1), line.index(stop2)) + 1]
+    visited_stops = line[min(line.index(stop1), line.index(stop2)):max(
+        line.index(stop1), line.index(stop2)) + 1]
 
     for i in range(len(visited_stops) - 1):
         try:
@@ -139,9 +141,12 @@ def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
 
 def distance_between_stops(stop_dict, stop1, stop2):
     R = 6371.009
-    d_lat = abs(float(stop_dict[stop1]["lat"]) - float(stop_dict[stop2]["lat"])) * (pi / 180)
-    lat_m = ((float(stop_dict[stop1]["lat"]) + float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
-    d_lon = abs(float(stop_dict[stop1]["lon"]) - float(stop_dict[stop2]["lon"])) * (pi / 180)
+    d_lat = abs(float(stop_dict[stop1]["lat"]) -
+                float(stop_dict[stop2]["lat"])) * (pi / 180)
+    lat_m = ((float(stop_dict[stop1]["lat"]) +
+             float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
+    d_lon = abs(float(stop_dict[stop1]["lon"]) -
+                float(stop_dict[stop2]["lon"])) * (pi / 180)
     return round(R * sqrt((d_lat ** 2) + (cos(lat_m) * d_lon) ** 2), 3)
 
 
@@ -151,16 +156,41 @@ def dialogue(tramnetwork_file_path):
 
     while True:
         command = input("> ").split(" ")
-        if command[0].lower() == "quit":
+        try:
+            cmd = is_valid_command(command)
+        except InvalidCommandException as e:
+            print(e)
+            print("Sorry, try again!")
+            continue
+
+        if cmd == "q":
             exit(0)
-        elif command[0].lower() == "via":
+        if cmd == "v":
             print(lines_via_stops(tram_network["lines"], command[1]))
-        elif command[0].lower() == "between":
-            print(lines_between_stops(tram_network["lines"], command[1], command[3]))
-        elif command[0].lower() == "time":
-            print(time_between_stops(tram_network["times"], tram_network["lines"], command[2], command[4], command[6]))
-        elif command[0].lower() == "distance":
-            print(distance_between_stops(tram_network["stops"], command[2], command[4]))
+        if cmd == "b":
+            print(lines_between_stops(
+                tram_network["lines"], command[1], command[3]))
+        if cmd == "t":
+            print(time_between_stops(
+                tram_network["times"], tram_network["lines"], command[2], command[4], command[6]))
+        if cmd == "d":
+            print(distance_between_stops(
+                tram_network["stops"], command[2], command[4]))
+
+
+def is_valid_command(command):
+    first_command = command[0].lower()
+    if first_command == "quit":
+        return "q"
+    if first_command == "via":
+        return "v"
+    if first_command == "between":
+        return "b"
+    if first_command == "time":
+        return "t"
+    if first_command == "distance":
+        return "d"
+    raise InvalidCommandException(command[0])
 
 
 def main():
