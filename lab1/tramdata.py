@@ -222,6 +222,8 @@ def isc(command: str):
         r"distance from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
     if distance:
         return distance
+    # otherwise quit
+    return "q"
 
 
 def main():
