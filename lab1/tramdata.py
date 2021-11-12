@@ -121,7 +121,7 @@ def lines_via_stops(line_dict, stop):
 def lines_between_stops(line_dict, stop1, stop2):
     available_lines = list()
     for line in line_dict:
-        if line in lines_via_stops(line_dict, stop1.title()) and line in lines_via_stops(line_dict, stop2.title()):
+        if line in lines_via_stops(line_dict, stop1) and line in lines_via_stops(line_dict, stop2):
             available_lines.append(line)
     available_lines.sort(key=int)
     return available_lines
