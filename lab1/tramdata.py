@@ -157,12 +157,16 @@ def distance_between_stops(stop_dict, stop1, stop2):
     stop2 = stop2.title()
 
     R = 6371.009
-    d_lat = abs(float(stop_dict[stop1]["lat"]) -
-                float(stop_dict[stop2]["lat"])) * (pi / 180)
-    lat_m = ((float(stop_dict[stop1]["lat"]) +
-             float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
-    d_lon = abs(float(stop_dict[stop1]["lon"]) -
-                float(stop_dict[stop2]["lon"])) * (pi / 180)
+    try:
+        d_lat = abs(float(stop_dict[stop1]["lat"]) -
+                    float(stop_dict[stop2]["lat"])) * (pi / 180)
+        lat_m = ((float(stop_dict[stop1]["lat"]) +
+                  float(stop_dict[stop2]["lat"])) / 2) * (pi / 180)
+        d_lon = abs(float(stop_dict[stop1]["lon"]) -
+                    float(stop_dict[stop2]["lon"])) * (pi / 180)
+    except KeyError as e:
+        raise InvalidInputException(f"No such location found: {e}")
+
     return round(R * sqrt((d_lat ** 2) + (cos(lat_m) * d_lon) ** 2), 3)
 
 
@@ -205,13 +209,22 @@ def execute_command(user_input, tram_network):
     raise InvalidInputException(f"Invalid input. Unknown command: '{user_input.split()[0]}'")
 
 
+def create_network():
+    print("Starting tram network creation...")
+    build_tram_network(TRAMSTOPS, TRAMLINES)
+    print('Tram network created!')
+
+
 def main():
     if 'init' in sys.argv:
-        print("Creating tram network...")
-        build_tram_network(TRAMSTOPS, TRAMLINES)
-        print('Tram network created!')
+        create_network()
     else:
-        dialogue(TRAMNETWORK)
+        try:
+            dialogue(TRAMNETWORK)
+        except FileNotFoundError as e:
+            print(f"No tram network found at: {e.filename}")
+            create_network()
+            dialogue(TRAMNETWORK)
 
 
 if __name__ == "__main__":
