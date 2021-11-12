@@ -2,10 +2,9 @@ import json
 import os
 import re
 import sys
-from invalidcommandexception import InvalidCommandException
 from math import pi, sqrt, cos
 from typing import List, Tuple
-from invalidcommandexception import InvalidCommandException
+from invalidinputexception import InvalidInputException
 
 TRAMLINES = 'tramlines.txt'
 TRAMSTOPS = 'tramstops.json'
@@ -45,12 +44,12 @@ def calc_diff_in_time(now: str, previous: str) -> int:
 
 
 def create_tram_stops(file_path: str) -> dict:
-    with open(get_data_path(TRAMSTOPS), 'r', encoding='utf-8') as f:
+    with open(get_data_path(file_path), 'r', encoding='utf-8') as f:
         return build_tram_stops(f)
 
 
 def create_tram_lines_and_times(file_path: str):
-    with open(get_data_path(TRAMLINES), 'r', encoding='utf-8') as f:
+    with open(get_data_path(file_path), 'r', encoding='utf-8') as f:
         return build_tram_lines_and_times(f)
 
 
@@ -105,28 +104,38 @@ def get_data_path(*args):
 
 
 def lines_via_stops(line_dict, stop):
+    stop = stop.title()
     available_lines = list()
+
     for line in line_dict:
         if stop in line_dict[line]:
             available_lines.append(line)
-    # TODO raise / return 'no stations for that line' if none found
-    available_lines.sort(key=int)
-    return available_lines
+
+    if available_lines:
+        available_lines.sort(key=int)
+        return available_lines
+
+    raise InvalidInputException(f"No line travels by: {stop}")
 
 
 def lines_between_stops(line_dict, stop1, stop2):
     available_lines = list()
     for line in line_dict:
-        if line in lines_via_stops(line_dict, stop1) and line in lines_via_stops(line_dict, stop2):
+        if line in lines_via_stops(line_dict, stop1.title()) and line in lines_via_stops(line_dict, stop2.title()):
             available_lines.append(line)
     available_lines.sort(key=int)
     return available_lines
 
 
 def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
+    if line_number not in line_dict:
+        raise InvalidInputException(f"Line {line_number} does not exist")
+
+    stop1 = stop1.title()
+    stop2 = stop2.title()
+
     if line_number not in lines_between_stops(line_dict, stop1, stop2):
-        print("Both stops do not appear on the given line!")
-        return -1
+        raise InvalidInputException(f"Line {line_number} does not travel between {stop1} and {stop2}")
     line = line_dict[line_number]
 
     time = 0
@@ -144,6 +153,9 @@ def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
 
 
 def distance_between_stops(stop_dict, stop1, stop2):
+    stop1 = stop1.title()
+    stop2 = stop2.title()
+
     R = 6371.009
     d_lat = abs(float(stop_dict[stop1]["lat"]) -
                 float(stop_dict[stop2]["lat"])) * (pi / 180)
@@ -159,69 +171,38 @@ def dialogue(tramnetwork_file_path):
         tram_network = json.load(f)
 
     while True:
-        ip = input("> ")
-        command = ip.split(" ")
         try:
-            cmd = is_valid_command(command)
-            args = isc(ip)[0]
-        except InvalidCommandException as e:
+            print(execute_command(input("> "), tram_network))
+        except InvalidInputException as e:
             print(e)
-            print("Sorry, try again!")
+            print("Please try again!")
             continue
 
-        if cmd == "q":
-            exit(0)
-        if cmd == "v":
-            print(args)
-            print(lines_via_stops(tram_network["lines"], args))
-        if cmd == "b":
-            print(args)
-            print(lines_between_stops(
-                tram_network["lines"], args[0], args[1]))
-        if cmd == "t":
-            print(args)
-            print(time_between_stops(
-                tram_network["times"], tram_network["lines"], args[0], args[1], args[2]))
-        if cmd == "d":
-            print(args)
-            print(distance_between_stops(
-                tram_network["stops"], args[0], args[1]))
 
-
-def is_valid_command(command):
-    first_command = command[0].lower()
-    if first_command == "quit":
-        return "q"
-    if first_command == "via":
-        return "v"
-    if first_command == "between":
-        return "b"
-    if first_command == "time":
-        return "t"
-    if first_command == "distance":
-        return "d"
-    raise InvalidCommandException(command[0])
-
-
-def isc(command: str):
-    via = re.findall(r"via ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+def execute_command(user_input, tram_network):
+    via = re.findall(r"via ((?:[a-ö]+ ?)+)", user_input, flags=re.IGNORECASE)
     if via:
-        return via
+        return lines_via_stops(tram_network['lines'], via[0])
 
     between = re.findall(
-        r"between ((?:[a-ö]+ ?)+) and ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+        r"between ((?:[a-ö]+ ?)+) and ((?:[a-ö]+ ?)+)", user_input, flags=re.IGNORECASE)
     if between:
-        return between
+        return lines_between_stops(tram_network['lines'], between[0][0], between[0][1])
 
     time = re.findall(
-        r"time with (\d+) from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+        r"time with (\d+) from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", user_input, flags=re.IGNORECASE)
     if time:
-        return time
+        return time_between_stops(tram_network['times'], tram_network['lines'], time[0][0], time[0][1], time[0][2])
 
     distance = re.findall(
-        r"distance from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", command, flags=re.IGNORECASE)
+        r"distance from ((?:[a-ö]+ ?)+) to ((?:[a-ö]+ ?)+)", user_input, flags=re.IGNORECASE)
     if distance:
-        return distance
+        return distance_between_stops(tram_network['stops'], distance[0][0], distance[0][1])
+
+    if user_input == "quit":
+        exit(0)
+
+    raise InvalidInputException(f"Invalid input. Unknown command: '{user_input.split()[0]}'")
 
 
 def main():
