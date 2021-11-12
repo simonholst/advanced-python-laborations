@@ -135,7 +135,8 @@ def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
     stop2 = stop2.title()
 
     if line_number not in lines_between_stops(line_dict, stop1, stop2):
-        raise InvalidInputException(f"Line {line_number} does not travel between {stop1} and {stop2}")
+        raise InvalidInputException(
+            f"Line {line_number} does not travel between {stop1} and {stop2}")
     line = line_dict[line_number]
 
     time = 0
@@ -206,7 +207,8 @@ def execute_command(user_input, tram_network):
     if user_input == "quit":
         exit(0)
 
-    raise InvalidInputException(f"Invalid input. Unknown command: '{user_input.split()[0]}'")
+    raise InvalidInputException(
+        f"Invalid input. Unknown command: '{user_input.split()[0]}'")
 
 
 def create_network():
