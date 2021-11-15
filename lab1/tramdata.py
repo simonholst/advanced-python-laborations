@@ -13,7 +13,7 @@ TRAMNETWORK = 'tramnetwork.json'
 
 def build_tram_stops(json_object) -> dict:
     stops = json.load(json_object)
-    return {stop: {'lat': stops[stop]["position"][0], 'lon': stops[stop]["position"][1]} for stop in stops}
+    return {stop.lower(): {'lat': stops[stop]["position"][0], 'lon': stops[stop]["position"][1]} for stop in stops}
 
 
 def build_tram_lines(tram_lines: List[str]) -> dict:
@@ -33,7 +33,10 @@ def find_line_number(line: str) -> str:
 
 
 def create_stops_for_line(line: str) -> List[str]:
-    return re.compile(r"(?:[a-ö]+ ?)+\S", flags=re.IGNORECASE).findall(line)
+    stops = re.compile(r"(?:[a-ö]+ ?)+\S", flags=re.IGNORECASE).findall(line)
+    for i in range(len(stops)):
+        stops[i] = stops[i].lower()
+    return stops
 
 
 def calc_diff_in_time(now: str, previous: str) -> int:
@@ -72,8 +75,8 @@ def build_tram_times(tram_lines: List[str]) -> dict:
     for line in tram_lines:
         station_time_tuples = stations_and_times_list(line)
         for i in range(len(station_time_tuples) - 1):
-            station = station_time_tuples[i][0]
-            next_station = station_time_tuples[i + 1][0]
+            station = station_time_tuples[i][0].lower()
+            next_station = station_time_tuples[i + 1][0].lower()
             value = calc_diff_in_time(
                 station_time_tuples[i + 1][1], station_time_tuples[i][1])
 
@@ -104,7 +107,7 @@ def get_data_path(*args):
 
 
 def lines_via_stops(line_dict, stop):
-    stop = stop.title()
+    stop = stop.lower()
     available_lines = list()
 
     for line in line_dict:
@@ -131,8 +134,8 @@ def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
     if line_number not in line_dict:
         raise InvalidInputException(f"Line {line_number} does not exist")
 
-    stop1 = stop1.title()
-    stop2 = stop2.title()
+    stop1 = stop1.lower()
+    stop2 = stop2.lower()
 
     if line_number not in lines_between_stops(line_dict, stop1, stop2):
         raise InvalidInputException(
@@ -154,8 +157,8 @@ def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
 
 
 def distance_between_stops(stop_dict, stop1, stop2):
-    stop1 = stop1.title()
-    stop2 = stop2.title()
+    stop1 = stop1.lower()
+    stop2 = stop2.lower()
 
     R = 6371.009
     try:
