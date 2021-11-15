@@ -53,7 +53,8 @@ class TestTramData(unittest.TestCase):
                                      self.timedict, self.linedict, line_number, stop2, stop1),
                                  msg=f"Time between {stop1} to {stop2} is not equal to time between {stop2} to {stop1}")
 
-    # The dialogue functions below test the array of user inputs, rather than the concrete implementation itself. The main purpose of the tests is
+    # The dialogue functions below test the array of user inputs, rather than the
+    # concrete implementation itself. The main purpose of the tests is
     # to confirm that they don't raise an error. With asserts as a double check.
 
     def test_dialogue_via(self):
