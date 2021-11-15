@@ -97,6 +97,13 @@ class TestTramData(unittest.TestCase):
                             max_distance,
                             msg=f"The distance between {stop1} and stop{2} is greater than {max_distance} km")
 
+    def test_invalid_input(self):
+        invalid_commands = ["not_valid_command", "via my house", "between Chalmers and Malmö", "distance from here to there",
+                            "time with 14 from Chalmers to Brunnsparken"]
+        for invalid_command in invalid_commands:
+            with self.assertRaises(InvalidInputException):
+                execute_command(invalid_command, self.tramdict)
+
 
 if __name__ == '__main__':
     unittest.main()
