@@ -40,7 +40,6 @@ def create_stops_for_line(line: str) -> List[str]:
 
 
 def calc_diff_in_time(now: str, previous: str) -> int:
-    # TODO make cleaner
     mins100, mins = now.split(":")
     prev_mins100, prev_mins = previous.split(":")
     return (int(mins100) - int(prev_mins100)) * 100 + (int(mins) - int(prev_mins))
@@ -56,29 +55,19 @@ def create_tram_lines_and_times(file_path: str):
         return build_tram_lines_and_times(f)
 
 
-def apply_func_to_file(func, path: str):
-    try:
-        with open(path, 'r', encoding="utf-8") as file:
-            return func(file)
-    except FileNotFoundError:
-        with open('../' + path, 'r', encoding="utf-8") as file:
-            return func(file)
-
-
 def stations_and_times_list(expr: str) -> List[tuple]:
     return re.compile(r"((?:[a-ö]+ ?)+\S) *(\d\d:\d\d)", flags=re.IGNORECASE).findall(expr)
 
 
 def build_tram_times(tram_lines: List[str]) -> dict:
-    # FIXME maybe change to using dict() operation on the list of tuples
     stop_time_dict = dict()
     for line in tram_lines:
         station_time_tuples = stations_and_times_list(line)
         for i in range(len(station_time_tuples) - 1):
             station = station_time_tuples[i][0].lower()
             next_station = station_time_tuples[i + 1][0].lower()
-            value = calc_diff_in_time(
-                station_time_tuples[i + 1][1], station_time_tuples[i][1])
+            value = calc_diff_in_time(station_time_tuples[i + 1][1],
+                                      station_time_tuples[i][1])
 
             # Avoid duplicates
             if next_station in stop_time_dict and station in stop_time_dict[next_station]:
@@ -96,8 +85,10 @@ def build_tram_network(stops_file_path, lines_file_path):
     with open(get_data_path('tramnetwork.json'), 'w', encoding='utf-8') as f:
         stops = create_tram_stops(stops_file_path)
         lines, times = create_tram_lines_and_times(lines_file_path)
-        f.write(json.dumps({**{'stops': stops}, **
-                            {'lines': lines}, **{'times': times}}, indent=4))
+        f.write(json.dumps({**{'stops': stops},
+                            **{'lines': lines},
+                            **{'times': times}}, indent=4))
+
 
 
 def get_data_path(*args):
@@ -107,11 +98,10 @@ def get_data_path(*args):
 
 
 def lines_via_stops(line_dict, stop):
-    stop = stop.lower()
     available_lines = list()
 
     for line in line_dict:
-        if stop in line_dict[line]:
+        if stop.lower() in line_dict[line]:
             available_lines.append(line)
 
     if available_lines:
@@ -131,29 +121,40 @@ def lines_between_stops(line_dict, stop1, stop2):
 
 
 def time_between_stops(time_dict, line_dict, line_number, stop1, stop2):
-    if line_number not in line_dict:
-        raise InvalidInputException(f"Line {line_number} does not exist")
+    check_valid_line_num(line_dict, line_number)
 
-    stop1 = stop1.lower()
-    stop2 = stop2.lower()
+    stop1, stop2 = stop1.lower(), stop2.lower()
 
-    if line_number not in lines_between_stops(line_dict, stop1, stop2):
-        raise InvalidInputException(
-            f"Line {line_number} does not travel between {stop1} and {stop2}")
+    if stop1 == stop2:
+        return 0
+
+    check_if_line_between_stops(line_dict, line_number, stop1, stop2)
     line = line_dict[line_number]
 
+    return calculate_time_between(line, stop1, stop2, time_dict)
+
+
+def calculate_time_between(line, stop1, stop2, time_dict):
     time = 0
-    if line.index(stop1) == line.index(stop2):
-        return time
     visited_stops = line[min(line.index(stop1), line.index(stop2)):max(
         line.index(stop1), line.index(stop2)) + 1]
-
     for i in range(len(visited_stops) - 1):
         try:
             time += time_dict[visited_stops[i]][visited_stops[i + 1]]
         except KeyError:
             time += time_dict[visited_stops[i + 1]][visited_stops[i]]
     return time
+
+
+def check_if_line_between_stops(line_dict, line_number, stop1, stop2):
+    if line_number not in lines_between_stops(line_dict, stop1, stop2):
+        raise InvalidInputException(
+            f"Line {line_number} does not travel between {stop1} and {stop2}")
+
+
+def check_valid_line_num(line_dict, line_number):
+    if line_number not in line_dict:
+        raise InvalidInputException(f"Line {line_number} does not exist")
 
 
 def distance_between_stops(stop_dict, stop1, stop2):
