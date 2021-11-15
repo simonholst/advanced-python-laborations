@@ -11,15 +11,16 @@ class TestTramData(unittest.TestCase):
 
     def setUp(self):
         with open(get_data_path(TRAM_FILE), 'r', encoding='utf-8') as trams:
-            tramdict = json.loads(trams.read())
-            self.stopdict = tramdict['stops']
-            self.linedict = tramdict['lines']
-            self.timedict = tramdict['times']
+            self.tramdict = json.loads(trams.read())
+            self.stopdict = self.tramdict['stops']
+            self.linedict = self.tramdict['lines']
+            self.timedict = self.tramdict['times']
 
     def test_stops_exist(self):
-        stopset = {stop for line in self.linedict for stop in self.linedict[line]}
+        stopset = {
+            stop for line in self.linedict for stop in self.linedict[line]}
         for stop in stopset:
-            self.assertIn(stop, self.stopdict, msg = stop + ' not in stopdict')
+            self.assertIn(stop, self.stopdict, msg=stop + ' not in stopdict')
 
     def test_lines_correct_group(self):
         with open(get_data_path(TRAM_LINES), 'r', encoding='utf-8') as f:
@@ -30,7 +31,8 @@ class TestTramData(unittest.TestCase):
                 current = text_lines[i].split("\n")
                 del current[0]
                 for stop in self.linedict[line]:
-                    self.assertIn(stop, current[0], msg=stop + 'not in tramlines.txt on line ' + str(current[0]))
+                    self.assertIn(
+                        stop, current[0].lower(), msg=stop + 'not in tramlines.txt on line ' + str(current[0]))
                     del current[0]
                 self.assertTrue(len(current) == 0)
                 i += 1
@@ -46,9 +48,26 @@ class TestTramData(unittest.TestCase):
         for line_number in self.linedict:
             for stop1, stop2 in list(itertools.combinations(self.linedict[line_number], 2)):
                 self.assertEqual(time_between_stops(self.timedict, self.linedict, line_number, stop1, stop2),
-                                 time_between_stops(self.timedict, self.linedict, line_number, stop2, stop1),
+                                 time_between_stops(
+                                     self.timedict, self.linedict, line_number, stop2, stop1),
                                  msg=f"Time between {stop1} to {stop2} is not equal to time between {stop2} to {stop1}")
 
+    def test_dialogue_via(self):
+        for stop in self.stopdict:
+            command = f"via {stop}"
+            self.assertTrue(execute_command(command, self.tramdict),
+                            msg=f"Did not find any lines for {stop}")
+
+    def test_dialogue_between(self):
+        max_n_lines = len(self.linedict)
+
+        for stop1, stop2 in list(itertools.combinations(list(self.stopdict), 2)):
+            command = f"between {stop1} and {stop2}"
+
+            self.assertLessEqual(len(execute_command(command, self.tramdict)),
+                                 max_n_lines,
+                                 msg=f"The number of available lines exceeds the number of total lines between\
+                                        {stop1} and {stop2}")
 
 
 if __name__ == '__main__':
