@@ -2,6 +2,7 @@ import copy
 import itertools
 import unittest
 from tramdata import *
+import random
 
 TRAM_FILE = 'tramnetwork.json'
 TRAM_LINES = 'tramlines.txt'
@@ -60,14 +61,41 @@ class TestTramData(unittest.TestCase):
 
     def test_dialogue_between(self):
         max_n_lines = len(self.linedict)
+        coms = list(itertools.combinations(list(self.stopdict), 2))
 
-        for stop1, stop2 in list(itertools.combinations(list(self.stopdict), 2)):
+        for _ in range(100):
+            stop1, stop2 = random.choice(coms)
             command = f"between {stop1} and {stop2}"
 
             self.assertLessEqual(len(execute_command(command, self.tramdict)),
                                  max_n_lines,
                                  msg=f"The number of available lines exceeds the number of total lines between\
                                         {stop1} and {stop2}")
+
+    def test_dialogue_time(self):
+        max_time = 99
+        line_numbers = self.linedict.keys()
+
+        for line_number in line_numbers:
+            coms = list(itertools.combinations(
+                list(self.linedict[line_number]), 2))
+            for _ in range(10):
+                stop1, stop2 = random.choice(coms)
+                command = f"time with {line_number} from {stop1} to {stop2}"
+                self.assertLess(execute_command(command, self.tramdict),
+                                max_time,
+                                msg=f"Travel time from {stop1} to {stop2} is greater than {max_time} min")
+
+    def test_dialogue_distance(self):
+        max_distance = 20
+        coms = list(itertools.combinations(list(self.stopdict), 2))
+
+        for _ in range(100):
+            stop1, stop2 = random.choice(coms)
+            command = f"distance from {stop1} to {stop2}"
+            self.assertLess(execute_command(command, self.tramdict),
+                            max_distance,
+                            msg=f"The distance between {stop1} and stop{2} is greater than {max_distance} km")
 
 
 if __name__ == '__main__':
