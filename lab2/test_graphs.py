@@ -2,7 +2,7 @@ import copy
 import unittest
 from hypothesis import given, strategies as st
 
-from lab2.graphs import Graph
+from graphs import Graph
 
 
 class MyTestCase(unittest.TestCase):
@@ -25,7 +25,8 @@ class MyTestCase(unittest.TestCase):
         before = copy.deepcopy(self.graph)
         self.graph.remove_edge(e1, e2)
         self.graph.add_edge(e1, e2)
-        self.assertEqual(before, self.graph, msg=f"\nbefore: {before} \nafter:{self.graph}")
+        self.assertEqual(before, self.graph,
+                         msg=f"\nbefore: {before} \nafter:{self.graph}")
 
     @given(st.integers(), st.integers())
     def test_add_edge_ints(self, e1, e2):
