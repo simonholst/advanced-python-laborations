@@ -1,15 +1,15 @@
 class Graph:
 
-    def __init__(self):
+    def __init__(self, edges=None):
         self._adj_list = {}
+        if edges is not None:
+            for edge in edges:
+                self.add_edge(edge[0], edge[1])
 
     def add_edge(self, a, b):
-        if a not in self._adj_list:
-            self._adj_list[a] = set()
+        self.add_vertex(a)
         self._adj_list[a].add(b)
-
-        if b not in self._adj_list:
-            self._adj_list[b] = set()
+        self.add_vertex(b)
         self._adj_list[b].add(a)
 
     def vertices(self):
@@ -24,11 +24,45 @@ class Graph:
                     eds.append((a, b))
         return eds
 
+    def add_vertex(self, vertex):
+        if vertex not in self._adj_list:
+            self._adj_list[vertex] = set()
+
+    def remove_vertex(self, vertex):
+        if vertex in self._adj_list:
+            self._adj_list.pop(vertex)
+
+    def remove_edge(self, vertex1, vertex2):
+        if vertex2 in self._adj_list[vertex1]:
+            self._adj_list[vertex1].remove(vertex2)
+
+        if vertex1 in self._adj_list[vertex2]:
+            self._adj_list[vertex2].remove(vertex1)
+
+    def get_vertex_value(self, vertex):
+        return self._adj_list.get(vertex, None)
+
+    def set_vertex_value(self, vertex, value):
+        self._adj_list[vertex] = value
+
+    def edge_in_graph(self, edge):
+        if not (edge[0] in self._adj_list and edge[1] in self._adj_list[edge[0]]):
+            return False
+        if not (edge[1] in self._adj_list and edge[0] in self._adj_list[edge[1]]):
+            return False
+        return True
+
     def __str__(self):
         return str(self._adj_list)
 
     def __getitem__(self, v):
         return self._adj_list[v]
+
+    def __eq__(self, other):
+        # TODO ask how to do this without accessing private variable.
+        # Possibly deepcopy getter
+        return self._adj_list == other._adj_list
+
 
 
 class ValueGraph(Graph):
@@ -61,4 +95,3 @@ class Tree(Graph):
         else:
             self._adj_list[a].add(b)
             self._adj_list[b] = set()
-
