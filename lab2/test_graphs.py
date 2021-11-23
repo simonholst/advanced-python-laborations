@@ -16,6 +16,8 @@ class MyTestCase(unittest.TestCase):
         self.graph.add_edge(1, 4)
         self.graph.add_edge(2, 3)
         self.graph.add_edge(3, 4)
+        self.graph.add_edge(3, 3)
+        print(self.graph)
 
     @given(st.integers(), st.integers())
     def test_add_remove_edge(self, e1, e2):
@@ -38,6 +40,17 @@ class MyTestCase(unittest.TestCase):
     def test_constructor(self):
         g2 = Graph(self.graph.edges())
         self.assertEqual(self.graph, g2)
+
+    @given(st.integers(), st.integers())
+    def test_remove_vertex(self, e1, e2):
+        self.graph.add_edge(e1, e2)
+        self.graph.remove_vertex(e1)
+        self.assertNotIn(e1, self.graph.vertices())
+        for vertex in self.graph.vertices():
+            self.assertNotIn(e1, self.graph.get_vertex_value(vertex))
+
+    def test_dijk(self):
+        self.graph.dijkstra(0, cost=lambda u, v: u*v)
 
 
 if __name__ == '__main__':
