@@ -13,6 +13,7 @@ TRAMNETWORK = 'tramnetwork.json'
 
 def build_tram_stops(json_object) -> dict:
     stops = json.load(json_object)
+
     return {stop.lower(): {'lat': stops[stop]["position"][0], 'lon': stops[stop]["position"][1]} for stop in stops}
 
 
