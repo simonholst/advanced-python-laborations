@@ -30,6 +30,10 @@ class Graph:
 
     def remove_vertex(self, vertex):
         if vertex in self._adj_list:
+            for v in self._adj_list[vertex]:
+                # Avoid changing set during removal since loops are allowed, vertex is popped after
+                if v != vertex:
+                    self._adj_list[v].remove(vertex)
             self._adj_list.pop(vertex)
 
     def remove_edge(self, vertex1, vertex2):
@@ -52,6 +56,16 @@ class Graph:
             return False
         return True
 
+    # TODO cost??
+    def dijkstra(self, source, cost=lambda u, v: 1):
+        print(cost(2, 3))
+        pass
+
+    # TODO neighbors method???
+
+    def __len__(self):
+        return len(self.vertices())
+
     def __str__(self):
         return str(self._adj_list)
 
@@ -64,6 +78,35 @@ class Graph:
         return self._adj_list == other._adj_list
 
 
+class WeightedGraph(Graph):
+
+    def __init__(self, edges=None):
+        super().__init__(edges)
+        self._weights = dict()
+
+    def get_weight(self, vertex1, vertex2):
+        # TODO make nicer? Ask TA?
+        try:
+            return self._weights[vertex1][vertex2]
+        except KeyError:
+            try:
+                return self._weights[vertex2][vertex1]
+            except KeyError:
+                return None
+
+    def set_weight(self, vertex1, vertex2, weight):
+        if vertex1 not in self._weights:
+            self._weights[vertex1] = dict()
+        self._weights[vertex1][vertex2] = weight
+
+    # TODO ask if we need these? Feels reasonable? Weights directly in graph? Redundant?
+    #########################################################################
+    def add_edge(self, a, b, weight=None):
+        super().add_edge(a, b)
+        self.set_weight(a, b, weight)
+
+    def remove_edge(self, vertex1, vertex2):
+        pass
 
 class ValueGraph(Graph):
     """
