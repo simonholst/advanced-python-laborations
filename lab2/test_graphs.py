@@ -27,7 +27,8 @@ class MyTestCase(unittest.TestCase):
         before = copy.deepcopy(self.graph)
         self.graph.remove_edge(e1, e2)
         self.graph.add_edge(e1, e2)
-        self.assertEqual(before, self.graph, msg=f"\nbefore: {before} \nafter:{self.graph}")
+        self.assertEqual(before, self.graph,
+                         msg=f"\nbefore: {before} \nafter:{self.graph}")
 
     @given(st.integers(), st.integers())
     def test_add_edge_ints(self, e1, e2):
@@ -75,8 +76,6 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(paths['Q'], ['A', 'C', 'E', 'Q'])
         self.assertEqual(paths['S'], ['A', 'B', 'S'])
         self.assertEqual(shortest_path['Q'], ['A', 'C', 'E', 'Q'])
-
-
 
 
 if __name__ == '__main__':

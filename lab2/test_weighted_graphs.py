@@ -1,6 +1,6 @@
 import unittest
 
-from lab2.graphs import WeightedGraph
+from graphs import WeightedGraph
 
 
 class MyTestCase(unittest.TestCase):
