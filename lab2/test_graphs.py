@@ -1,8 +1,11 @@
 import copy
 import unittest
+from pprint import pprint
+
 from hypothesis import given, strategies as st
 
-from lab2.graphs import Graph
+from graphs import Graph, WeightedGraph, dijkstra
+
 
 
 class MyTestCase(unittest.TestCase):
@@ -17,7 +20,6 @@ class MyTestCase(unittest.TestCase):
         self.graph.add_edge(2, 3)
         self.graph.add_edge(3, 4)
         self.graph.add_edge(3, 3)
-        print(self.graph)
 
     @given(st.integers(), st.integers())
     def test_add_remove_edge(self, e1, e2):
@@ -47,10 +49,34 @@ class MyTestCase(unittest.TestCase):
         self.graph.remove_vertex(e1)
         self.assertNotIn(e1, self.graph.vertices())
         for vertex in self.graph.vertices():
-            self.assertNotIn(e1, self.graph.get_vertex_value(vertex))
+            self.assertNotIn(e1, self.graph.neighbours(vertex))
 
     def test_dijk(self):
-        self.graph.dijkstra(0, cost=lambda u, v: u*v)
+        self.wg = WeightedGraph()
+        self.wg.add_edge('A', 'B', 1)
+        self.wg.add_edge('A', 'C', 2)
+        self.wg.add_edge('B', 'D', 6)
+        self.wg.add_edge('B', 'F', 2)
+        self.wg.add_edge('C', 'E', 1)
+        self.wg.add_edge('E', 'Q', 3)
+        self.wg.add_edge('Q', 'S', 5)
+        self.wg.add_edge('B', 'S', 1)
+        self.wg.add_edge('E', 'F', 4)
+
+        paths = dijkstra(graph=self.wg, source='A', cost=lambda u, v: self.wg.get_weight(u, v))
+        shortest_path = dijkstra(graph=self.wg, source='A', target='Q', cost=lambda u, v: self.wg.get_weight(u, v))
+
+        self.assertEqual(paths['A'], ['A'])
+        self.assertEqual(paths['B'], ['A', 'B'])
+        self.assertEqual(paths['C'], ['A', 'C'])
+        self.assertEqual(paths['D'], ['A', 'B', 'D'])
+        self.assertEqual(paths['E'], ['A', 'C', 'E'])
+        self.assertEqual(paths['F'], ['A', 'B', 'F'])
+        self.assertEqual(paths['Q'], ['A', 'C', 'E', 'Q'])
+        self.assertEqual(paths['S'], ['A', 'B', 'S'])
+        self.assertEqual(shortest_path['Q'], ['A', 'C', 'E', 'Q'])
+
+
 
 
 if __name__ == '__main__':
