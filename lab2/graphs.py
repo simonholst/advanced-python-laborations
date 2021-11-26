@@ -1,7 +1,12 @@
+import math
+from collections import defaultdict
+
+
 class Graph:
 
     def __init__(self, edges=None):
         self._adj_list = {}
+        self._vertex_values = {}
         if edges is not None:
             for edge in edges:
                 self.add_edge(edge[0], edge[1])
@@ -44,10 +49,10 @@ class Graph:
             self._adj_list[vertex2].remove(vertex1)
 
     def get_vertex_value(self, vertex):
-        return self._adj_list.get(vertex, None)
+        return self._vertex_values.get(vertex, None)
 
     def set_vertex_value(self, vertex, value):
-        self._adj_list[vertex] = value
+        self._vertex_values[vertex] = value
 
     def edge_in_graph(self, edge):
         if not (edge[0] in self._adj_list and edge[1] in self._adj_list[edge[0]]):
@@ -56,12 +61,8 @@ class Graph:
             return False
         return True
 
-    # TODO cost??
-    def dijkstra(self, source, cost=lambda u, v: 1):
-        print(cost(2, 3))
-        pass
-
-    # TODO neighbors method???
+    def neighbours(self, vertex):
+        return self._adj_list.get(vertex, None)
 
     def __len__(self):
         return len(self.vertices())
@@ -73,8 +74,6 @@ class Graph:
         return self._adj_list[v]
 
     def __eq__(self, other):
-        # TODO ask how to do this without accessing private variable.
-        # Possibly deepcopy getter
         return self._adj_list == other._adj_list
 
 
@@ -85,7 +84,6 @@ class WeightedGraph(Graph):
         self._weights = dict()
 
     def get_weight(self, vertex1, vertex2):
-        # TODO make nicer? Ask TA?
         try:
             return self._weights[vertex1][vertex2]
         except KeyError:
@@ -99,42 +97,50 @@ class WeightedGraph(Graph):
             self._weights[vertex1] = dict()
         self._weights[vertex1][vertex2] = weight
 
-    # TODO ask if we need these? Feels reasonable? Weights directly in graph? Redundant?
-    #########################################################################
     def add_edge(self, a, b, weight=None):
         super().add_edge(a, b)
         self.set_weight(a, b, weight)
 
-    def remove_edge(self, vertex1, vertex2):
-        pass
 
-class ValueGraph(Graph):
-    """
-    Graph where vertices have values
-    """
-    def __init__(self):
-        super().__init__()
-        self._value_list = {}
+def dijkstra(graph, source, target=None, cost=lambda u, v: 1):
+    Q = set()
+    dist = dict()
+    prev = dict()
 
-    def get_value(self, v):
-        return self._value_list.get(v, None)
+    for v in graph.vertices():
+        dist[v] = math.inf
+        prev[v] = None
+        Q.add(v)
+    dist[source] = 0
 
-    def set_value(self, v, x):
-        """Destructive update of value"""
-        self._value_list[v] = x
+    while Q:
+        u = min(Q, key=lambda x: dist[x])
+
+        Q.remove(u)
+
+        if target and u == target:
+            return make_path_dict({u: dist[u]}, prev)
+
+        for v in [nbr for nbr in graph.neighbours(u) if nbr in Q]:
+            alt = dist[u] + cost(u, v)
+            if alt < dist[v]:
+                dist[v] = alt
+                prev[v] = u
+
+    return make_path_dict(dist, prev)
 
 
-class Tree(Graph):
-    """Trees as graphs with certain restrictions"""
-    def __init__(self, root):
-        super().__init__()
-        self._adj_list = {root: set()}
+def make_path_dict(dist, prev):
+    res = defaultdict(list)
+    for key, value in dist.items():
+        if value != math.inf:
+            k = key
+            while k:
+                if prev[k]:
+                    res[key].append(prev[k])
+                k = prev[k]
+            res[key].reverse()
+            res[key].append(key)
+    return dict(res)
 
-    def add_edge(self, a, b):
-        if a not in self._adj_list:
-            print("Parent does not exist:", a)
-        elif b in self._adj_list:
-            print("Child already exists:", b)
-        else:
-            self._adj_list[a].add(b)
-            self._adj_list[b] = set()
+# dijkstra(g, g[1], cost=lambda u, v: g.get_weight(u, v))
