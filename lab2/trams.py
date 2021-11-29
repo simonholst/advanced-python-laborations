@@ -1,9 +1,7 @@
 
-import tramdata as td
 import graphs
 import sys
 import os
-sys.path.append('../lab1/')
 
 
 class TramStop():
@@ -21,7 +19,7 @@ class TramStop():
 
 class TramLine():
 
-    def __init__(self, name, stop_list: list(TramStop)) -> None:
+    def __init__(self, name, stop_list: list[TramStop]) -> None:
         self.name = name
         self.stop_list = stop_list
 
@@ -38,7 +36,10 @@ class TramNetwork(graphs.WeightedGraph):
 
     @staticmethod
     def init_tramstop():
+        sys.path.append('../lab1/')
+        import tramdata as td
         td.create_network()
+        print(os.path.exists(td.get_data_path('tramnetwork.json')))
 
 
-print(os.path.exists('data/tramnetwork.json'))
+TramNetwork.init_tramstop()
