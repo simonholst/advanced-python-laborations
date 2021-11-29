@@ -7,7 +7,6 @@ from hypothesis import given, strategies as st
 from graphs import Graph, WeightedGraph, dijkstra
 
 
-
 class MyTestCase(unittest.TestCase):
 
     def setUp(self):
@@ -20,6 +19,17 @@ class MyTestCase(unittest.TestCase):
         self.graph.add_edge(2, 3)
         self.graph.add_edge(3, 4)
         self.graph.add_edge(3, 3)
+
+        self.wg = WeightedGraph()
+        self.wg.add_edge('A', 'B', 1)
+        self.wg.add_edge('A', 'C', 2)
+        self.wg.add_edge('B', 'D', 6)
+        self.wg.add_edge('B', 'F', 2)
+        self.wg.add_edge('C', 'E', 1)
+        self.wg.add_edge('E', 'Q', 3)
+        self.wg.add_edge('Q', 'S', 5)
+        self.wg.add_edge('B', 'S', 1)
+        self.wg.add_edge('E', 'F', 4)
 
     @given(st.integers(), st.integers())
     def test_add_remove_edge(self, e1, e2):
@@ -53,19 +63,11 @@ class MyTestCase(unittest.TestCase):
             self.assertNotIn(e1, self.graph.neighbours(vertex))
 
     def test_dijk(self):
-        self.wg = WeightedGraph()
-        self.wg.add_edge('A', 'B', 1)
-        self.wg.add_edge('A', 'C', 2)
-        self.wg.add_edge('B', 'D', 6)
-        self.wg.add_edge('B', 'F', 2)
-        self.wg.add_edge('C', 'E', 1)
-        self.wg.add_edge('E', 'Q', 3)
-        self.wg.add_edge('Q', 'S', 5)
-        self.wg.add_edge('B', 'S', 1)
-        self.wg.add_edge('E', 'F', 4)
 
-        paths = dijkstra(graph=self.wg, source='A', cost=lambda u, v: self.wg.get_weight(u, v))
-        shortest_path = dijkstra(graph=self.wg, source='A', target='Q', cost=lambda u, v: self.wg.get_weight(u, v))
+        paths = dijkstra(graph=self.wg, source='A',
+                         cost=lambda u, v: self.wg.get_weight(u, v))
+        shortest_path = dijkstra(
+            graph=self.wg, source='A', target='Q', cost=lambda u, v: self.wg.get_weight(u, v))
 
         self.assertEqual(paths['A'], ['A'])
         self.assertEqual(paths['B'], ['A', 'B'])
@@ -76,6 +78,21 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(paths['Q'], ['A', 'C', 'E', 'Q'])
         self.assertEqual(paths['S'], ['A', 'B', 'S'])
         self.assertEqual(shortest_path['Q'], ['A', 'C', 'E', 'Q'])
+
+    def test_edges_with_correspodning_vertices(self):
+        for v, w in self.graph.edges():
+            self.assertIn(v, self.graph.vertices())
+            self.assertIn(w, self.graph.vertices())
+
+    def test_shortest_path(self):
+        source, target = 'A', 'Q'
+        shortest_path1 = dijkstra(
+            graph=self.wg, source=source, target=target, cost=lambda u, v: self.wg.get_weight(u, v))
+        source, target = 'Q', 'A'
+        shortest_path2 = dijkstra(
+            graph=self.wg, source=source, target=target, cost=lambda u, v: self.wg.get_weight(u, v))
+        self.assertEqual(shortest_path1['Q'], list(
+            reversed(shortest_path2['A'])))
 
 
 if __name__ == '__main__':

@@ -17,9 +17,7 @@ def visualize(G, view='dot', name='mygraph', nodecolor=None):
 
 def view_shortest(G, source, target, cost=lambda u, v: 1):
     path = dijkstra(G, source, target, cost)[target]
-    print(path)
     color_map = {str(v): 'orange' for v in path}
-    print(color_map)
     visualize(G, view='sfdp', nodecolor=color_map)
 
 
