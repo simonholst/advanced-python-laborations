@@ -101,6 +101,9 @@ class WeightedGraph(Graph):
         super().add_edge(a, b)
         self.set_weight(a, b, weight)
 
+    def get_weights(self):
+        return self._weights
+
 
 def dijkstra(graph, source, target=None, cost=lambda u, v: 1):
     Q = set()
