@@ -23,7 +23,7 @@ def demo():
         VG.edge(str(v), str(w))
     view_shortest(G, 2, 6)
     VG.save()
-    VG.render(format='png').replace('\\', '/')
+    VG.render(format='png', view=True)
 
 
 if __name__ == '__main__':
