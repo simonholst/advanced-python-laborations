@@ -1,0 +1,3 @@
+Good job! Functions correct, tests look good and distance_between_stops implemented correctly without using haversine.
+
+I think your variable names (if you want specific guidelines I would refer you here: https://www.python.org/dev/peps/pep-0008/#naming-conventions) but all of the function and argument annotations are redundant. They mostly clutter the code in my view and especially in this case, it's fairly straight-forward what type of input/output is expected.
