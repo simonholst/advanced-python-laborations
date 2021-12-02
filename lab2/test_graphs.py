@@ -51,15 +51,15 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(self.graph.edge_in_graph((e1, e2)))
 
     def test_constructor(self):
-        g2 = Graph(self.graph.edges())
+        g2 = Graph(self.graph.edges)
         self.assertEqual(self.graph, g2)
 
     @given(st.integers(), st.integers())
     def test_remove_vertex(self, e1, e2):
         self.graph.add_edge(e1, e2)
         self.graph.remove_vertex(e1)
-        self.assertNotIn(e1, self.graph.vertices())
-        for vertex in self.graph.vertices():
+        self.assertNotIn(e1, self.graph.vertices)
+        for vertex in self.graph.vertices:
             self.assertNotIn(e1, self.graph.neighbours(vertex))
 
     def test_dijk(self):
@@ -80,9 +80,9 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(shortest_path['Q'], ['A', 'C', 'E', 'Q'])
 
     def test_edges_with_correspodning_vertices(self):
-        for v, w in self.graph.edges():
-            self.assertIn(v, self.graph.vertices())
-            self.assertIn(w, self.graph.vertices())
+        for v, w in self.graph.edges:
+            self.assertIn(v, self.graph.vertices)
+            self.assertIn(w, self.graph.vertices)
 
     def test_shortest_path(self):
         source, target = 'A', 'Q'

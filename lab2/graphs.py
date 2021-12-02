@@ -17,9 +17,11 @@ class Graph:
         self.add_vertex(b)
         self._adj_list[b].add(a)
 
+    @property
     def vertices(self):
         return self._adj_list.keys()
 
+    @property
     def edges(self):
         eds = []
         for a in self._adj_list:
@@ -65,7 +67,7 @@ class Graph:
         return self._adj_list.get(vertex, None)
 
     def __len__(self):
-        return len(self.vertices())
+        return len(self.vertices)
 
     def __str__(self):
         return str(self._adj_list)
@@ -82,6 +84,10 @@ class WeightedGraph(Graph):
     def __init__(self, edges=None):
         super().__init__(edges)
         self._weights = dict()
+
+    @property
+    def weights(self):
+        return self._weights
 
     def get_weight(self, vertex1, vertex2):
         try:
@@ -101,16 +107,13 @@ class WeightedGraph(Graph):
         super().add_edge(a, b)
         self.set_weight(a, b, weight)
 
-    def get_weights(self):
-        return self._weights
-
 
 def dijkstra(graph, source, target=None, cost=lambda u, v: 1):
     Q = set()
     dist = dict()
     prev = dict()
 
-    for v in graph.vertices():
+    for v in graph.vertices:
         dist[v] = math.inf
         prev[v] = None
         Q.add(v)

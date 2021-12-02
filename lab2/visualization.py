@@ -4,13 +4,13 @@ from graphs import Graph, dijkstra
 
 def visualize(G, view='dot', name='mygraph', nodecolor=None):
     VG = graphviz.Graph('G', filename=name, engine=view, directory='graphs')
-    for v in G.vertices():
+    for v in G.vertices:
         v = str(v)
         if v in nodecolor:
             VG.node(v, style='filled', fillcolor=nodecolor[v])
         else:
             VG.node(v)
-    for v, w in G.edges():
+    for v, w in G.edges:
         VG.edge(str(v), str(w))
     VG.render(format='png', view=True)
 
@@ -18,13 +18,11 @@ def visualize(G, view='dot', name='mygraph', nodecolor=None):
 def view_shortest(G, source, target, cost=lambda u, v: 1):
     path = dijkstra(G, source, target, cost)[target]
     color_map = {str(v): 'orange' for v in path}
-    visualize(G, view='sfdp', nodecolor=color_map)
-
-
-def demo():
-    G = Graph([(1, 2), (1, 3), (1, 4), (3, 4), (3, 5), (3, 6), (3, 7), (6, 7)])
-    view_shortest(G, 2, 6)
+    visualize(G, view='neato', nodecolor=color_map)
 
 
 if __name__ == '__main__':
-    demo()
+    import trams
+    G = trams.TramNetwork.read_tramnetwork()
+    view_shortest(G, 'chalmers', 'brunnsparken', cost=lambda u, v: G.get_weight(u, v))
+

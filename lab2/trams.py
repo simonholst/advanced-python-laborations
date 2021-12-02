@@ -1,5 +1,4 @@
 from pprint import pprint
-
 import graphs
 import sys
 import os
@@ -19,7 +18,13 @@ class TramStop:
         self.line_list.append(line)
 
     def __repr__(self):
-        return f"TramStop: {self.name}"
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash(self.name)
 
 
 class TramLine:
@@ -29,60 +34,66 @@ class TramLine:
         self.stop_list = stop_list
 
     def __repr__(self):
-        return f"TramLine: {self.name}"
+        return self.name
+
+    def __str__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash(self.name)
 
 
 class TramNetwork(graphs.WeightedGraph):
 
-    def __init__(self, edges=None):
+    TRAM_FILE = 'tramnetwork.json'
+
+    def __init__(self, tramfile, edges=None):
         super().__init__(edges=edges)
         self.tram_stop_dict = dict()
         self.tram_line_dict = dict()
-        # TODO ask Aarne why we can't access variable directly??
-        self.weights = super().get_weights()
-        self.vertices = super().vertices()
-        self._edges = edges
-        self.init()
+        self.init_network(tramfile)
 
-    @property
-    def edges(self):
-        return self.edges()
-
-    @edges.getter
-    def edges(self):
-        return super().edges()
-
-    def init(self):
+    def init_network(self, tramfile):
         sys.path.append('../lab1/')
         import tramdata as td
-        if not os.path.exists(td.get_data_path(td.TRAMNETWORK)):
+        network = TramNetwork.__load_file(tramfile, td)
+        self.__add_tram_stops(network, td)
+        self.__add_tram_lines(network)
+        self.__add_vertices()
+        self.__add_edges(network)
+
+    @staticmethod
+    def __load_file(tramfile, td):
+        if not os.path.exists(td.get_data_path(tramfile)):
             td.create_network()
-        with open(td.get_data_path(td.TRAMNETWORK), encoding='utf-8') as f:
+        with open(td.get_data_path(tramfile), encoding='utf-8') as f:
             network = json.load(f)
+        return network
 
+    def __add_tram_stops(self, network, td):
         for stop in network['stops']:
-            self.tram_stop_dict[stop] = TramStop(stop, network['stops'][stop], td.lines_via_stops(network['lines'], stop))
+            self.tram_stop_dict[stop] = TramStop(stop, network['stops'][stop],
+                                                 td.lines_via_stops(network['lines'], stop))
 
+    def __add_tram_lines(self, network):
         for line in network['lines']:
             stop_list = list()
             for stop in network['lines'][line]:
                 stop_list.append(self.tram_stop_dict[stop])
             self.tram_line_dict[line] = TramLine(line, stop_list)
 
+    def __add_vertices(self):
         for stop in self.tram_stop_dict.values():
             self.add_vertex(stop)
 
+    def __add_edges(self, network):
         for stop, destinations in network['times'].items():
-            for destination, weight in destinations.items():
-                self.add_edge(stop, destination, weight)
+            stop = self.tram_stop_dict[stop]
+            destinations = [self.tram_stop_dict[d] for d in destinations]
+            for destination in destinations:
+                self.add_edge(stop, destination, network['times'][stop.name][destination.name])
 
-
-
-    # @staticmethod
-    # def init_tram_network():
-    #     return network['stops'], network['lines'], network['times']
-
-
-network = TramNetwork()
-pprint(network.tram_stop_dict)
+    @classmethod
+    def read_tramnetwork(cls, tramfile=TRAM_FILE):
+        return cls(tramfile)
 
