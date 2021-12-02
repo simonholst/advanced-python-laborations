@@ -26,6 +26,12 @@ class TramStop:
     def __hash__(self):
         return hash(self.name)
 
+    def __le__(self, other):
+        return self.name < other.name
+
+    def __eq__(self, other):
+        return self.name == other.name
+
 
 class TramLine:
 

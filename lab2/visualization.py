@@ -1,6 +1,6 @@
 import graphviz
-from graphs import Graph, dijkstra
-
+from graphs import dijkstra
+import trams
 
 def visualize(G, view='dot', name='mygraph', nodecolor=None):
     VG = graphviz.Graph('G', filename=name, engine=view, directory='graphs')
@@ -21,8 +21,14 @@ def view_shortest(G, source, target, cost=lambda u, v: 1):
     visualize(G, view='neato', nodecolor=color_map)
 
 
-if __name__ == '__main__':
-    import trams
+def demo():
     G = trams.TramNetwork.read_tramnetwork()
-    view_shortest(G, 'chalmers', 'brunnsparken', cost=lambda u, v: G.get_weight(u, v))
+    a, b = input('from,to ').split(',')
+    a, b = G.tram_stop_dict[a], G.tram_stop_dict[b]
+    view_shortest(G, a, b, cost=lambda u, v: G.get_weight(u, v))
+
+
+if __name__ == '__main__':
+    demo()
+
 
