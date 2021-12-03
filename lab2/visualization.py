@@ -2,6 +2,7 @@ import graphviz
 from graphs import dijkstra
 import trams
 
+
 def visualize(G, view='dot', name='mygraph', nodecolor=None):
     VG = graphviz.Graph('G', filename=name, engine=view, directory='graphs')
     for v in G.vertices:

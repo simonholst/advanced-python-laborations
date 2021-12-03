@@ -1,4 +1,3 @@
-from pprint import pprint
 import graphs
 import sys
 import os
@@ -48,6 +47,9 @@ class TramLine:
     def __hash__(self):
         return hash(self.name)
 
+    def __iter__(self):
+        return iter(self.stop_list)
+
 
 class TramNetwork(graphs.WeightedGraph):
 
@@ -58,6 +60,9 @@ class TramNetwork(graphs.WeightedGraph):
         self.tram_stop_dict = dict()
         self.tram_line_dict = dict()
         self.init_network(tramfile)
+
+    def __len__(self):
+        return len(self.tram_stop_dict)
 
     def init_network(self, tramfile):
         sys.path.append('../lab1/')
