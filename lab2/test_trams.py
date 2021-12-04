@@ -1,6 +1,6 @@
 import random
 import unittest
-from trams import TramNetwork
+from trams import TramNetwork, TramLine, TramStop
 import sys
 from hypothesis import given, strategies as st
 from collections import deque
@@ -10,6 +10,9 @@ class MyTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         self.network = TramNetwork.read_tramnetwork()
+        self.line_dict = self.network.tram_line_dict
+        self.stop_dict = self.network.tram_stop_dict
+
 
     def test_stops_exist(self):
         stopset = {
@@ -62,4 +65,11 @@ class MyTestCase(unittest.TestCase):
     def test_vertices(self):
         self.assertEqual(len(self.network.vertices), len(self.network.tram_stop_dict))
 
+    def test_all_lines(self):
+        for line in self.network.all_lines():
+            self.assertEqual(type(line), TramLine)
+
+    def test_all_stops(self):
+        for stop in self.network.all_stops():
+            self.assertEqual(type(stop), TramStop)
 
