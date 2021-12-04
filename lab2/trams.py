@@ -1,54 +1,90 @@
+from math import pi, sqrt, cos
+
 import graphs
 import sys
 import os
 import json
+import lab1.tramdata as tramdata
 
 
 class TramStop:
 
     def __init__(self, name, position=None, line_list=None) -> None:
-        self.name = name
-        self.position = position
-        self.line_list = line_list
+        self._name = name
+        self._position = position
+        self._line_list = line_list
 
     def add_line(self, line):
         if not self.line_list:
             self.line_list = list()
         self.line_list.append(line)
 
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def position(self):
+        return self._position
+
+    @position.setter
+    def position(self, value):
+        if type(value) != dict:
+            raise TypeError('Position has to a dict')
+        self._position = value
+
+    def set_position(self, lat, lon):
+        self._position = {'lat': lat, 'lon': lon}
+
+    @property
+    def line_list(self):
+        return self._line_list
+
     def __repr__(self):
-        return self.name
+        return self._name
 
     def __str__(self):
-        return self.name
+        return self._name
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self._name)
 
     def __le__(self, other):
-        return self.name < other.name
+        return self._name < other.name
 
     def __eq__(self, other):
-        return self.name == other.name
+        return self._name == other.name
+
+    @line_list.setter
+    def line_list(self, value):
+        self._line_list = value
 
 
 class TramLine:
 
-    def __init__(self, name, stop_list: list[TramStop]) -> None:
-        self.name = name
-        self.stop_list = stop_list
+    def __init__(self, number, stop_list: list[TramStop]) -> None:
+        self._number = number
+        self._stop_list = stop_list
+
+    @property
+    def number(self):
+        return self._number
+
+    @property
+    def stop_list(self):
+        return self._stop_list
 
     def __repr__(self):
-        return self.name
+        return self._number
 
     def __str__(self):
-        return self.name
+        return self._number
 
     def __hash__(self):
-        return hash(self.name)
+        return hash(self._number)
 
     def __iter__(self):
-        return iter(self.stop_list)
+        return iter(self._stop_list)
 
 
 class TramNetwork(graphs.WeightedGraph):
@@ -103,6 +139,26 @@ class TramNetwork(graphs.WeightedGraph):
             destinations = [self.tram_stop_dict[d] for d in destinations]
             for destination in destinations:
                 self.add_edge(stop, destination, network['times'][stop.name][destination.name])
+
+    def all_lines(self) -> list:
+        return list(self.tram_line_dict.values())
+
+    def all_stops(self) -> list:
+        return list(self.tram_stop_dict.values())
+
+    @staticmethod
+    def geo_distance(self, a, b):
+        R = 6371.009
+
+        d_lat = abs(float(a.position['lat']) -
+                    float(b.position['lat'])) * (pi / 180)
+        lat_m = ((float(a.position['lat']) +
+                  float(b.position['lat'])) / 2) * (pi / 180)
+        d_lon = abs(float(a.position['lon']) -
+                    float(b.position['lon'])) * (pi / 180)
+
+        return round(R * sqrt((d_lat ** 2) + (cos(lat_m) * d_lon) ** 2), 3)
+
 
     @classmethod
     def read_tramnetwork(cls, tramfile=TRAM_FILE):
