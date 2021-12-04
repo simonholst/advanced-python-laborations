@@ -4,8 +4,6 @@ import graphs
 import sys
 import os
 import json
-import lab1.tramdata as tramdata
-
 
 class TramStop:
 
@@ -159,6 +157,27 @@ class TramNetwork(graphs.WeightedGraph):
 
         return round(R * sqrt((d_lat ** 2) + (cos(lat_m) * d_lon) ** 2), 3)
 
+    def line_stops(self, line):
+        return self.tram_line_dict.get(line, None).stop_list
+
+    def remove_lines(self, lines: list[str]):
+        for line in lines:
+            del self.tram_line_dict[line]
+
+    def stop_lines(self, a):
+        return self.tram_stop_dict[a].line_list
+
+    def stop_position(self, a):
+        return self.tram_stop_dict[a].position
+
+    def transition_time(self, a, b):
+        time = 0
+        a = self.tram_stop_dict[a]
+        b = self.tram_stop_dict[b]
+        path = graphs.dijkstra(self, a, b, cost=lambda u, v: self.get_weight(u, v))
+        for i in range(len(path[b]) - 1):
+            time += self.get_weight(path[b][i], path[b][i+1])
+        return time
 
     @classmethod
     def read_tramnetwork(cls, tramfile=TRAM_FILE):
