@@ -73,3 +73,15 @@ class MyTestCase(unittest.TestCase):
         for stop in self.network.all_stops():
             self.assertEqual(type(stop), TramStop)
 
+    def test_transition_time(self):
+        transition = self.network.transition_time
+        self.assertEqual(transition('chalmers', 'brunnsparken'), 7)
+        self.assertEqual(transition('chalmers', 'brunnsparken'), transition('brunnsparken', 'chalmers'))
+
+        stops = list(self.stop_dict.keys())
+        for _ in range(100):
+            s1 = random.choice(stops)
+            s2 = random.choice(stops)
+            self.assertEqual(transition(s1, s2), transition(s2, s1))
+
+
