@@ -93,12 +93,12 @@ class TramNetwork(graphs.WeightedGraph):
         super().__init__(edges=edges)
         self.tram_stop_dict = dict()
         self.tram_line_dict = dict()
-        self.init_network(tramfile)
+        self.__init_network(tramfile)
 
     def __len__(self):
         return len(self.tram_stop_dict)
 
-    def init_network(self, tramfile):
+    def __init_network(self, tramfile):
         sys.path.append('../lab1/')
         import tramdata as td
         network = TramNetwork.__load_file(tramfile, td)
