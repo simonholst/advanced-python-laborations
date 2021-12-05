@@ -145,7 +145,7 @@ class TramNetwork(graphs.WeightedGraph):
         return list(self.tram_stop_dict.values())
 
     @staticmethod
-    def geo_distance(self, a, b):
+    def geo_distance(a, b):
         R = 6371.009
 
         d_lat = abs(float(a.position['lat']) -
