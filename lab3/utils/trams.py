@@ -1,9 +1,10 @@
+import math
 from math import pi, sqrt, cos
-
-import graphs
+from graphs import WeightedGraph, dijkstra
 import sys
 import os
 import json
+
 
 class TramStop:
 
@@ -85,7 +86,7 @@ class TramLine:
         return iter(self._stop_list)
 
 
-class TramNetwork(graphs.WeightedGraph):
+class TramNetwork(WeightedGraph):
 
     TRAM_FILE = 'tramnetwork.json'
 
@@ -174,10 +175,27 @@ class TramNetwork(graphs.WeightedGraph):
         time = 0
         a = self.tram_stop_dict[a]
         b = self.tram_stop_dict[b]
-        path = graphs.dijkstra(self, a, b, cost=lambda u, v: self.get_weight(u, v))
+        path = dijkstra(self, a, b, cost=lambda u, v: self.get_weight(u, v))
         for i in range(len(path[b]) - 1):
             time += self.get_weight(path[b][i], path[b][i+1])
         return time
+
+    def extreme_positions(self):
+        min_lon, min_lat = math.inf, math.inf
+        max_lon, max_lat = -math.inf, -math.inf
+        for tram_stop in self.tram_stop_dict.values():
+            lat = tram_stop.position['lat']
+            lon = tram_stop.position['lon']
+            if lat > max_lat:
+                max_lat = lat
+            if lat < min_lat:
+                min_lat = lat
+            if lon > max_lon:
+                max_lon = lon
+            if lon < min_lon:
+                min_lon = lon
+        return min_lon, min_lat, max_lon, max_lat
+
 
     @classmethod
     def read_tramnetwork(cls, tramfile=TRAM_FILE):
