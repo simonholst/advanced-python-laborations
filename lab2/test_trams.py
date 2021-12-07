@@ -13,7 +13,6 @@ class MyTestCase(unittest.TestCase):
         self.line_dict = self.network.tram_line_dict
         self.stop_dict = self.network.tram_stop_dict
 
-
     def test_stops_exist(self):
         stopset = {
             stop for line in self.network.tram_line_dict for stop in self.network.tram_line_dict[line]}
