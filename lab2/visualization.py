@@ -13,7 +13,7 @@ def visualize(G, view='dot', name='mygraph', nodecolor=None):
             VG.node(v)
     for v, w in G.edges:
         VG.edge(str(v), str(w))
-    VG.render(format='png', view=True)
+    VG.render(format='svg', view=True)
 
 
 def view_shortest(G, source, target, cost=lambda u, v: 1):

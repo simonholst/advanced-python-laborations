@@ -196,7 +196,6 @@ class TramNetwork(WeightedGraph):
                 min_lon = lon
         return min_lon, min_lat, max_lon, max_lat
 
-
     @classmethod
     def read_tramnetwork(cls, tramfile=TRAM_FILE):
         return cls(tramfile)
