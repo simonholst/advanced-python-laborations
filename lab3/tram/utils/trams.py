@@ -55,10 +55,16 @@ class TramStop:
         return hash(self._name)
 
     def __le__(self, other):
-        return self._name < other.name
+        try:
+            return self._name < other.name
+        except AttributeError:
+            return other.__le__(self.name)
 
     def __eq__(self, other):
-        return self._name == other.name
+        try:
+            return self._name == other.name
+        except AttributeError:
+            return other.__eq__(self.name)
 
     @line_list.setter
     def line_list(self, value):
@@ -190,7 +196,7 @@ class TramNetwork(WeightedGraph):
         path = dijkstra(self, a, b, cost=lambda u, v: self.get_weight(u, v))
         for i in range(len(path[b]) - 1):
             time += self.get_weight(path[b][i], path[b][i+1])
-        return time
+        return time, path
 
     def transition_distance(self, a, b):
         distance = 0
@@ -199,7 +205,7 @@ class TramNetwork(WeightedGraph):
         path = dijkstra(self, a, b, cost=lambda u, v: self.geo_distance(u, v))
         for i in range(len(path[b]) - 1):
             distance += self.geo_distance(path[b][i], path[b][i+1])
-        return distance
+        return distance, path
 
     def extreme_positions(self):
         stops = self.tram_stop_dict.values()

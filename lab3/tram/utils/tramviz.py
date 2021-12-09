@@ -42,7 +42,7 @@ def stop_url(stop):
 
 # You don't probably need to change this
 
-def network_graphviz(network, outfile, colors=None, positions=scaled_position):
+def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=None, positions=scaled_position):
     dot = graphviz.Graph(engine='fdp', graph_attr={'size': '12,12'})
 
     for stop in network.all_stops():
@@ -52,8 +52,10 @@ def network_graphviz(network, outfile, colors=None, positions=scaled_position):
             x, y = positions(network)((x, y))
         pos_x, pos_y = str(x), str(y)
 
-        if colors:
-            col = colors(stop)  # set this to white to create gbg_tramnet.svg
+        if geo_path and stop in list(geo_path.values())[0]:
+            col = 'orange'
+        elif time_path and stop in list(time_path.values())[0]:
+            col = 'blue'
         else:
             col = 'white'
 
@@ -77,7 +79,7 @@ def network_graphviz(network, outfile, colors=None, positions=scaled_position):
 
 def show_shortest(dep, dest):
     network = TramNetwork.read_tram_network()
-    time_path = network.transition_time(dep, dest)
-    geo_path = network.transition_distance(dep, dest)
-    network_graphviz(network, SHORTEST_PATH_SVG)
+    time, time_path = network.transition_time(dep, dest)
+    distance, geo_path = network.transition_distance(dep, dest)
+    network_graphviz(network, SHORTEST_PATH_SVG, time_path, geo_path)
     return time_path, geo_path
