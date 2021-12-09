@@ -73,7 +73,7 @@ def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=Non
 
     dot.format = 'svg'
     s = dot.pipe().decode('utf-8')
-    with open(outfile, 'w') as file:
+    with open(outfile, 'w', encoding='utf-8') as file:
         file.write(s)
 
 
