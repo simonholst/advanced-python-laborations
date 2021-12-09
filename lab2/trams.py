@@ -5,12 +5,17 @@ import sys
 import os
 import json
 
+
 class TramStop:
 
     def __init__(self, name, position=None, line_list=None) -> None:
         self._name = name
-        self._position = position
+        self._position = TramStop.__convert_position_to_float(position)
         self._line_list = line_list
+
+    @staticmethod
+    def __convert_position_to_float(position):
+        return {'lat': float(position['lat']), 'lon': float(position['lon'])}
 
     def add_line(self, line):
         if not self.line_list:
@@ -168,7 +173,7 @@ class TramNetwork(graphs.WeightedGraph):
         return self.tram_stop_dict[a].line_list
 
     def stop_position(self, a):
-        return self.tram_stop_dict[a].position
+        return self.tram_stop_dict[a].position['lat'], self.tram_stop_dict[a].position['lon']
 
     def transition_time(self, a, b):
         time = 0
@@ -178,6 +183,14 @@ class TramNetwork(graphs.WeightedGraph):
         for i in range(len(path[b]) - 1):
             time += self.get_weight(path[b][i], path[b][i+1])
         return time
+
+    def extreme_positions(self):
+        stops = self.tram_stop_dict.values()
+        min_lon = min([stop.position['lon'] for stop in stops])
+        min_lat = min([stop.position['lat'] for stop in stops])
+        max_lon = max([stop.position['lon'] for stop in stops])
+        max_lat = max([stop.position['lat'] for stop in stops])
+        return min_lon, min_lat, max_lon, max_lat
 
     @classmethod
     def read_tramnetwork(cls, tramfile=TRAM_FILE):

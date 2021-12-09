@@ -1,17 +1,23 @@
 import math
 from math import pi, sqrt, cos
-from graphs import WeightedGraph, dijkstra
+from .graphs import WeightedGraph, dijkstra
 import sys
 import os
 import json
+import logging
+logger = logging.getLogger('tramlogger')
 
 
 class TramStop:
 
     def __init__(self, name, position=None, line_list=None) -> None:
         self._name = name
-        self._position = position
+        self._position = TramStop.__convert_position_to_float(position)
         self._line_list = line_list
+
+    @staticmethod
+    def __convert_position_to_float(position):
+        return {'lat': float(position['lat']), 'lon': float(position['lon'])}
 
     def add_line(self, line):
         if not self.line_list:
@@ -99,20 +105,20 @@ class TramNetwork(WeightedGraph):
     def __len__(self):
         return len(self.tram_stop_dict)
 
-    def __init_network(self, tramfile):
+    def __init_network(self, tram_file):
         sys.path.append('../lab1/')
         import tramdata as td
-        network = TramNetwork.__load_file(tramfile, td)
+        network = TramNetwork.__load_file(tram_file, td)
         self.__add_tram_stops(network, td)
         self.__add_tram_lines(network)
         self.__add_vertices()
         self.__add_edges(network)
 
     @staticmethod
-    def __load_file(tramfile, td):
-        if not os.path.exists(td.get_data_path(tramfile)):
+    def __load_file(tram_file, td):
+        if not os.path.exists(td.get_data_path(tram_file)):
             td.create_network()
-        with open(td.get_data_path(tramfile), encoding='utf-8') as f:
+        with open(td.get_data_path(tram_file), encoding='utf-8') as f:
             network = json.load(f)
         return network
 
@@ -159,7 +165,10 @@ class TramNetwork(WeightedGraph):
         return round(R * sqrt((d_lat ** 2) + (cos(lat_m) * d_lon) ** 2), 3)
 
     def line_stops(self, line):
-        return self.tram_line_dict.get(line, None).stop_list
+        if type(line) == str:
+            return self.tram_line_dict.get(line, None).stop_list
+        else:
+            return line.stop_list
 
     def remove_lines(self, lines: list[str]):
         for line in lines:
@@ -169,7 +178,10 @@ class TramNetwork(WeightedGraph):
         return self.tram_stop_dict[a].line_list
 
     def stop_position(self, a):
-        return self.tram_stop_dict[a].position
+        if type(a) == str:
+            return self.tram_stop_dict[a].position['lat'], self.tram_stop_dict[a].position['lon']
+        else:
+            return a.position['lat'], a.position['lon']
 
     def transition_time(self, a, b):
         time = 0
@@ -180,23 +192,24 @@ class TramNetwork(WeightedGraph):
             time += self.get_weight(path[b][i], path[b][i+1])
         return time
 
+    def transition_distance(self, a, b):
+        distance = 0
+        a = self.tram_stop_dict[a]
+        b = self.tram_stop_dict[b]
+        path = dijkstra(self, a, b, cost=lambda u, v: self.geo_distance(u, v))
+        for i in range(len(path[b]) - 1):
+            distance += self.geo_distance(path[b][i], path[b][i+1])
+        return distance
+
     def extreme_positions(self):
-        min_lon, min_lat = math.inf, math.inf
-        max_lon, max_lat = -math.inf, -math.inf
-        for tram_stop in self.tram_stop_dict.values():
-            lat = tram_stop.position['lat']
-            lon = tram_stop.position['lon']
-            if lat > max_lat:
-                max_lat = lat
-            if lat < min_lat:
-                min_lat = lat
-            if lon > max_lon:
-                max_lon = lon
-            if lon < min_lon:
-                min_lon = lon
+        stops = self.tram_stop_dict.values()
+        min_lon = min([stop.position['lon'] for stop in stops])
+        min_lat = min([stop.position['lat'] for stop in stops])
+        max_lon = max([stop.position['lon'] for stop in stops])
+        max_lat = max([stop.position['lat'] for stop in stops])
         return min_lon, min_lat, max_lon, max_lat
 
     @classmethod
-    def read_tramnetwork(cls, tramfile=TRAM_FILE):
-        return cls(tramfile)
+    def read_tram_network(cls, tram_file=TRAM_FILE):
+        return cls(tram_file)
 
