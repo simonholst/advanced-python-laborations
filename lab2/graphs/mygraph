@@ -41,8 +41,8 @@ graph G {
 	"korsvägen"
 	scandinavium
 	"ullevi södra"
-	domkyrkan [fillcolor=orange style=filled]
-	"grönsakstorget" [fillcolor=orange style=filled]
+	domkyrkan
+	"grönsakstorget"
 	vasaplatsen [fillcolor=orange style=filled]
 	"vasa viktoriagatan"
 	"handelshögskolan"
@@ -61,8 +61,8 @@ graph G {
 	stigbergstorget
 	masthuggstorget
 	hagakyrkan
-	valand
-	kungsportsplatsen
+	valand [fillcolor=orange style=filled]
+	kungsportsplatsen [fillcolor=orange style=filled]
 	solrosgatan
 	sanatoriegatan
 	virginsgatan
@@ -80,10 +80,10 @@ graph G {
 	"sankt sigfrids plan"
 	"liseberg station"
 	"lilla bommen"
-	frihamnen [fillcolor=orange style=filled]
-	"hjalmar brantingsplatsen" [fillcolor=orange style=filled]
-	"vågmästareplatsen" [fillcolor=orange style=filled]
-	wieselgrensplatsen [fillcolor=orange style=filled]
+	frihamnen
+	"hjalmar brantingsplatsen"
+	"vågmästareplatsen"
+	wieselgrensplatsen
 	rambergsvallen
 	"gropegårdsgatan"
 	"eketrägatan"
@@ -109,7 +109,7 @@ graph G {
 	"wavrinskys plats"
 	medicinaregatan
 	"sahlgrenska huvudentré"
-	nordstan [fillcolor=orange style=filled]
+	nordstan
 	komettorget
 	"rymdtorget spårvagn"
 	teleskopgatan
@@ -133,46 +133,46 @@ graph G {
 	majvallen
 	"fjällgatan"
 	"tingvallsvägen" -- "östra sjukhuset"
-	kaggeledstorget -- "ättehögsgatan"
 	kaggeledstorget -- "tingvallsvägen"
+	kaggeledstorget -- "ättehögsgatan"
 	"munkebäckstorget" -- "ättehögsgatan"
 	"munkebäckstorget" -- solrosgatan
+	"härlanda" -- "munkebäckstorget"
 	"härlanda" -- stockholmsgatan
 	"härlanda" -- solrosgatan
-	"härlanda" -- "munkebäckstorget"
 	redbergsplatsen -- stockholmsgatan
 	olskrokstorget -- redbergsplatsen
 	olskrokstorget -- svingeln
 	svingeln -- "ullevi norra"
 	"ullevi norra" -- "ullevi södra"
-	centralstationen -- "ullevi södra"
 	centralstationen -- "gamlestads torg"
 	centralstationen -- "ullevi norra"
+	centralstationen -- "ullevi södra"
 	centralstationen -- "lilla bommen"
 	brunnsparken -- domkyrkan
-	brunnsparken -- kungsportsplatsen
 	brunnsparken -- stenpiren
-	brunnsparken -- centralstationen
+	brunnsparken -- kungsportsplatsen
 	brunnsparken -- "lilla bommen"
+	brunnsparken -- centralstationen
 	brunnsparken -- nordstan
 	"järntorget" -- prinsgatan
 	"järntorget" -- masthuggstorget
 	"järntorget" -- stenpiren
 	olivedalsgatan -- prinsgatan
 	olivedalsgatan -- seminariegatan
-	"linnéplatsen" -- "sahlgrenska huvudentré"
 	"linnéplatsen" -- olivedalsgatan
-	"botaniska trädgården" -- "sahlgrenska huvudentré"
+	"linnéplatsen" -- "sahlgrenska huvudentré"
 	"botaniska trädgården" -- marklandsgatan
 	"botaniska trädgården" -- "linnéplatsen"
-	"axel dahlströms torg" -- lantmilsgatan
+	"botaniska trädgården" -- "sahlgrenska huvudentré"
 	"axel dahlströms torg" -- marklandsgatan
+	"axel dahlströms torg" -- lantmilsgatan
 	lantmilsgatan -- nymilsgatan
-	"musikvägen" -- positivgatan
 	"musikvägen" -- nymilsgatan
+	"musikvägen" -- positivgatan
 	"frölunda torg spårvagn" -- positivgatan
-	briljantgatan -- "frölunda torg spårvagn"
 	briljantgatan -- smaragdgatan
+	briljantgatan -- "frölunda torg spårvagn"
 	opaltorget -- smaragdgatan
 	"mölndals innerstad" -- "mölndals sjukhus"
 	"lackarebäck" -- "mölndals sjukhus"
@@ -181,10 +181,10 @@ graph G {
 	"krokslätts torg" -- lana
 	lana -- varbergsgatan
 	elisedal -- varbergsgatan
-	almedal -- "liseberg södra"
 	almedal -- elisedal
-	"korsvägen" -- "liseberg station"
+	almedal -- "liseberg södra"
 	"korsvägen" -- scandinavium
+	"korsvägen" -- "liseberg station"
 	"korsvägen" -- "liseberg södra"
 	scandinavium -- "ullevi södra"
 	domkyrkan -- "grönsakstorget"
@@ -192,29 +192,29 @@ graph G {
 	"grönsakstorget" -- vasaplatsen
 	"vasa viktoriagatan" -- vasaplatsen
 	"handelshögskolan" -- "vasa viktoriagatan"
-	brunnsgatan -- "handelshögskolan"
 	brunnsgatan -- seminariegatan
+	brunnsgatan -- "handelshögskolan"
 	bokekullsgatan -- marklandsgatan
 	bokekullsgatan -- "högsbogatan"
 	"högsbogatan" -- "klintens väg"
-	godhemsgatan -- mariaplan
 	godhemsgatan -- "klintens väg"
-	mariaplan -- ostindiegatan
+	godhemsgatan -- mariaplan
 	mariaplan -- marklandsgatan
 	mariaplan -- sannaplan
+	mariaplan -- ostindiegatan
 	ostindiegatan -- sannaplan
 	ostindiegatan -- "vagnhallen majorna"
 	jaegerdorffsplatsen -- "vagnhallen majorna"
-	"chapmans torg" -- kaptensgatan
 	"chapmans torg" -- jaegerdorffsplatsen
+	"chapmans torg" -- kaptensgatan
 	kaptensgatan -- stigbergstorget
 	masthuggstorget -- stigbergstorget
-	hagakyrkan -- "vasa viktoriagatan"
 	hagakyrkan -- "järntorget"
+	hagakyrkan -- "vasa viktoriagatan"
 	valand -- vasaplatsen
 	kungsportsplatsen -- valand
-	sanatoriegatan -- solrosgatan
 	sanatoriegatan -- virginsgatan
+	sanatoriegatan -- solrosgatan
 	virginsgatan -- welandergatan
 	berzeliigatan -- valand
 	berzeliigatan -- "korsvägen"
@@ -224,14 +224,14 @@ graph G {
 	hammarkullen -- "hjällbo"
 	"angered centrum" -- "storås"
 	"töpelsgatan" -- welandergatan
-	"bögatan" -- ekmanska
 	"bögatan" -- "töpelsgatan"
+	"bögatan" -- ekmanska
 	"bäckeliden" -- "sankt sigfrids plan"
 	"bäckeliden" -- ekmanska
 	"liseberg station" -- "sankt sigfrids plan"
+	frihamnen -- "hjalmar brantingsplatsen"
 	frihamnen -- "lilla bommen"
 	frihamnen -- nordstan
-	frihamnen -- "hjalmar brantingsplatsen"
 	"hjalmar brantingsplatsen" -- "vågmästareplatsen"
 	"vågmästareplatsen" -- wieselgrensplatsen
 	rambergsvallen -- wieselgrensplatsen
@@ -245,22 +245,22 @@ graph G {
 	"friskväderstorget" -- "väderilsgatan"
 	temperaturgatan -- varmfrontsgatan
 	temperaturgatan -- "väderilsgatan"
-	allhelgonakyrkan -- aprilgatan
-	allhelgonakyrkan -- januarigatan
 	allhelgonakyrkan -- "kortedala torg"
+	allhelgonakyrkan -- januarigatan
+	allhelgonakyrkan -- aprilgatan
 	"kortedala torg" -- runstavsgatan
 	"nymånegatan" -- runstavsgatan
-	"beväringsgatan" -- kviberg
 	"beväringsgatan" -- "nymånegatan"
-	bellevue -- skf
+	"beväringsgatan" -- kviberg
 	bellevue -- kviberg
+	bellevue -- skf
 	ejdergatan -- redbergsplatsen
 	ejdergatan -- "gamlestads torg"
-	chalmers -- kapellplatsen
-	chalmers -- "korsvägen"
 	chalmers -- "wavrinskys plats"
-	medicinaregatan -- "sahlgrenska huvudentré"
+	chalmers -- "korsvägen"
+	chalmers -- kapellplatsen
 	medicinaregatan -- "wavrinskys plats"
+	medicinaregatan -- "sahlgrenska huvudentré"
 	komettorget -- "rymdtorget spårvagn"
 	"rymdtorget spårvagn" -- teleskopgatan
 	"galileis gata" -- januarigatan
@@ -269,15 +269,15 @@ graph G {
 	sandarna -- sannaplan
 	kungssten -- "nya varvsallén"
 	kungssten -- sandarna
-	"doktor fries torg" -- "doktor sydows gata"
 	"doktor fries torg" -- "wavrinskys plats"
+	"doktor fries torg" -- "doktor sydows gata"
 	"roddföreningen" -- saltholmen
 	"långedrag" -- "roddföreningen"
-	hinsholmen -- "käringberget"
 	hinsholmen -- "långedrag"
+	hinsholmen -- "käringberget"
 	"käringberget" -- tranered
-	hagen -- "nya varvsallén"
 	hagen -- tranered
+	hagen -- "nya varvsallén"
 	ekedal -- majvallen
 	ekedal -- godhemsgatan
 	"fjällgatan" -- majvallen

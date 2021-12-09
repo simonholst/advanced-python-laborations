@@ -1,8 +1,12 @@
 from django.shortcuts import render
-from .models import Fruit
+from .forms import RouteForm
 # Create your views here.
 
 
-def post_list(request):
-    image = '../../static/mygraph.svg'
-    return render(request, 'tram/post_list.html', {'image': image})
+def tram_net(request):
+    return render(request, 'tram/home.html', {})
+
+
+def find_route(request):
+    form = RouteForm()
+    return render(request, 'tram/find_route.html', {'form': form})

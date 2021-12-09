@@ -3,13 +3,12 @@ from django.db import models
 from django.utils import timezone
 
 # Create your models here.
+from django.db import models
 
 
-class Fruit(models.Model):
-    name = models.TextField()
-
-    def publish(self):
-        self.save()
+class Route(models.Model):
+    dep = models.CharField(max_length=200)
+    dest = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.name
+        return self.dep + '-' + self.dest
