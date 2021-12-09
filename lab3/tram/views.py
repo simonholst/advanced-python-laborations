@@ -5,7 +5,7 @@ from .utils.tramviz import show_shortest
 
 
 def tram_net(request):
-    return render(request, 'tram/home.html', {})
+    return render(request, 'tram/home.html', {'page_header': 'Home'})
 
 
 def find_route(request):

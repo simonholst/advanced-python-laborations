@@ -1,0 +1,14 @@
+body {
+    background: #222222 url("images/trambackground.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    box-shadow: 0 0 0 100px rgba(0,0,0,.8) inset;
+    color: white;
+    margin-top: 1rem;
+}
+
+a {
+    color: deepskyblue;
+}

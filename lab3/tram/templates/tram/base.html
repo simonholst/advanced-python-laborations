@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,8 +10,7 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-    <title>Hello, world!</title>
-
+    <link rel="stylesheet" type="text/css" href="{% static 'tram/main.css' %}">
     {% if title %}
       <title>{{ title }}</title>
       {% else %}
@@ -21,6 +21,9 @@
     <div class="container">
         <a href="/">Home</a> |
         <a href="/route">Search</a>
+        {% if page_header %}
+            <h1> {{ page_header }} </h1>
+        {% endif %}
     </div>
     <div class="container">
         {% block content %}{% endblock %}
