@@ -1,19 +1,7 @@
-<!DOCTYPE HTML>
-<html>
-<head>
-<title>Shortest Path</title>
-</head>
-
-<body>
-<a href="/">Home</a> | <a href="/route">Search</a>
-
-<h1>{{ route }}</h1>
-
-<p> {{ timepath }} </p>
-<p> {{ geopath }} </p>
-
-{% include './images/shortest_path.svg' %}
-<!-- change this to shortest_path.svg -->
-
-</body>
-</html>
+{% extends "tram/base.html" %}
+{% block content %}
+    <h1>{{ route }}</h1>
+    <p> {{ timepath }} </p>
+    <p> {{ geopath }} </p>
+    {% include './images/shortest_path.svg' %}
+{% endblock content %}

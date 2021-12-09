@@ -1,21 +1,9 @@
-<!DOCTYPE HTML>
-<html>
-
-<head>
-<title>FindRoute</title>
-</head>
-
-<body>
-
-<a href="/">Home</a> |
-<a href="/route">Search</a>
-
+{% extends "tram/base.html" %}
+{% block content %}
 <h1>Find Route</h1>
 
 <form method="POST" class="post-form">{% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Search</button>
 </form>
-
-</body>
-</html>
+{% endblock content %}
