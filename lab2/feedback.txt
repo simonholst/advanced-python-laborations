@@ -1,0 +1,3 @@
+Hi! Looks like you managed to complete the task but running visualization.py using Python 3.10 doesn't work on my system..
+
+The structure of your submission is quite different from the lab description, which makes it time consuming to troubleshoot so I suggest that you come to a lab supervision and check with me or Arianna to make sure that it runs.
