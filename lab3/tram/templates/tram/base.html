@@ -16,18 +16,21 @@
       {% else %}
       <title>Advanced Python Laboration</title>
       {% endif %}
-</head>
-<body>
-    <div class="container">
+    <div class="navigation">
         <a href="/">Home</a> |
         <a href="/route">Search</a>
+    </div>
+</head>
+<body>
+    <div>
         {% if page_header %}
-            <h1> {{ page_header }} </h1>
+            <h1 class="page-title"> {{ page_header }} </h1>
         {% endif %}
     </div>
-    <div class="container">
+    <div class="center">
         {% block content %}{% endblock %}
     </div>
+
 
 
     <!-- Optional JavaScript -->

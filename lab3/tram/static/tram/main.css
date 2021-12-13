@@ -1,13 +1,30 @@
 body {
-    background: #222222 url("images/trambackground.png") no-repeat center center fixed;
+    background: url("images/trambgdark.png") no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    box-shadow: 0 0 0 100px rgba(0,0,0,.8) inset;
     color: white;
+    margin-left: 2rem;
     margin-top: 1rem;
 }
+
+.navigation {
+    margin-top: 1rem;
+    font-size: 20px;
+}
+
+.page-title {
+    font-size: 50px;
+}
+
+.center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
 
 a {
     color: deepskyblue;
