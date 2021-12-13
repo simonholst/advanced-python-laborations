@@ -43,7 +43,7 @@ def stop_url(stop):
 # You don't probably need to change this
 
 def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=None, positions=scaled_position):
-    dot = graphviz.Graph(engine='fdp', graph_attr={'size': '12,12'})
+    dot = graphviz.Graph(engine='fdp', graph_attr={'size': '12,12', 'bgcolor': 'transparent'})
 
     for stop in network.all_stops():
         stop = stop.name
@@ -52,12 +52,14 @@ def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=Non
             x, y = positions(network)((x, y))
         pos_x, pos_y = str(x), str(y)
 
+        col = 'white'
         if geo_path and stop in list(geo_path.values())[0]:
             col = 'orange'
-        elif time_path and stop in list(time_path.values())[0]:
-            col = 'blue'
-        else:
-            col = 'white'
+        if time_path and stop in list(time_path.values())[0]:
+            if col != 'white':
+                col = 'cyan'
+            else:
+                col = 'green'
 
         dot.node(str(stop), label=f'{stop}', shape='rectangle', pos=f"{pos_x},{pos_y}!",
                  fontsize='8pt', width='0.4', height='0.05',
