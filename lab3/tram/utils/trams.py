@@ -1,4 +1,5 @@
 import math
+import pprint
 from math import pi, sqrt, cos
 from .graphs import WeightedGraph, dijkstra, dijkstra_with_lines
 import sys
@@ -153,6 +154,9 @@ class TramNetwork(WeightedGraph):
                 for destination in destinations:
                     if line in destination.line_list:
                         self.add_edge((stop, line), (destination, line), weight=network['times'][stop.name][destination.name])
+                for otherline in stop.line_list:
+                    if line != otherline:
+                        self.add_edge((stop, line), (stop, otherline), weight=0)
 
 
     def all_lines(self) -> list:
@@ -203,9 +207,7 @@ class TramNetwork(WeightedGraph):
                                                  transition_cost=transition_cost)
                 paths.append((path, time))
 
-        #print(paths)
         shortest = min(paths, key=lambda x: x[1])
-        print(shortest)
         return shortest
 
     def extreme_positions(self):
