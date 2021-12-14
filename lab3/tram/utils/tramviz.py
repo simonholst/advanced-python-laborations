@@ -86,17 +86,23 @@ def show_shortest(dep, dest):
     geo_path, distance = network.transition(dep, dest, cost=lambda u, v: network.geo_distance(u[0], v[0]),
                                             transition_cost=20)
     network_graphviz(network, SHORTEST_PATH_SVG, format_path(time_path), format_path(geo_path))
-    return format(time_path, 'quickest'), format(geo_path, 'shortest')
+    return time_path, geo_path
 
 
 def format_path(path):
     stops = list(path.values())[0]
     return [stop[0].name for stop in stops]
 
+
 def format(path, label):
+    path_string = f"{label.title()}: {' - '.join(list_names(path))}"
+    return path_string
+
+
+def list_names(path):
     stops = []
     for stop in list(path.values())[0]:
-        stop = stop[0].name.title()
+        stop = f"{stop[1]}. {stop[0].name.title()}"
         stops.append(stop)
-    path_string = f"{label.title()}: {' - '.join(stops)}"
-    return path_string
+
+    return stops

@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import RouteForm
-from .utils.tramviz import show_shortest
+from .utils.tramviz import show_shortest, list_names
 # Create your views here.
 
 
@@ -15,6 +15,8 @@ def find_route(request):
         if form.is_valid():
             route = form.data
             timepath, geopath = show_shortest(route['dep'], route['dest'])
+            timepath = list_names(timepath)
+            geopath = list_names(geopath)
             return render(request, 'tram/show_route.html',
                 {'dest': form.instance.__str__(), 'timepath': timepath, 'geopath': geopath})
     return render(request, 'tram/find_route.html', {'form': form})

@@ -19,13 +19,75 @@ body {
 }
 
 .center {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.form-box-center {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.center-text {
+    text-align: center;
+    font-size: 50px;
+}
+
+.absolute-center {
     position: absolute;
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
 }
 
+.float-container {
+    padding: 20px;
+    font-size: 20px;
+}
+
+.float-child {
+    width: 50%;
+    float: left;
+    padding: 20px;
+}
+
+.input-container {
+    padding: 0;
+}
+
+.input-child {
+    width: 50%;
+    float: left;
+    padding: 1rem;
+}
+
+input[type=text] {
+    width: 75%;
+    margin: 2rem auto;
+    box-sizing: border-box;
+    font-size: 30px;
+    font-weight: bold;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+}
+
+.sebbe-center {
+    margin:auto;
+    position:relative;
+    width: 600px;
+}
 
 a {
     color: deepskyblue;
+}
+
+#wrapper {
+  display: flex;
+}
+
+#left {
+  flex: 0 0 50%;
+}
+
+#right {
+  flex: 1;
 }
