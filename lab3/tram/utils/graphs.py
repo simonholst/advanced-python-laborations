@@ -136,6 +136,49 @@ def dijkstra(graph, source, target=None, cost=lambda u, v: 1):
     return make_path_dict(dist, prev)
 
 
+def dijkstra_with_lines(graph, source, target=None, cost=lambda u, v: 1, transition_cost=0):
+    Q = set()
+    dist = dict()
+    prev = dict()
+
+    for v in graph.vertices:
+        dist[v] = math.inf
+        prev[v] = None
+        Q.add(v)
+
+    dist[source] = 0
+
+    while Q:
+        u = min(Q, key=lambda x: dist[x])
+
+        Q.remove(u)
+
+        if target and u == target:
+            print('target found')
+            return make_path_dict({u: dist[u]}, prev), dist[u]
+
+        flag = False
+        print(graph.neighbours(u))
+        for v in [nbr for nbr in graph.neighbours(u) if nbr in Q]:
+            flag = True
+            print(f"Source: {u},     Target: {v}")
+            change_cost = 0
+            if u[1] != v[1]:
+                change_cost = transition_cost
+
+            alt = dist[u] + cost(u, v) + change_cost
+            if alt < dist[v]:
+                dist[v] = alt
+                prev[v] = u
+        if flag:
+            print("Entered loop on previous iteration")
+        else:
+            print("Did not enter loop on previous iteration")
+
+    # return "no path", 0 #make_path_dict(dist, prev)
+    raise NotImplemented
+
+
 def make_path_dict(dist, prev):
     res = defaultdict(list)
     for key, value in dist.items():

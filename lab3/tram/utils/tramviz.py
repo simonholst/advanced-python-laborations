@@ -53,9 +53,9 @@ def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=Non
         pos_x, pos_y = str(x), str(y)
 
         col = 'white'
-        if geo_path and stop in list(geo_path.values())[0]:
+        if geo_path and stop in geo_path:
             col = 'orange'
-        if time_path and stop in list(time_path.values())[0]:
+        if time_path and stop in time_path:
             if col != 'white':
                 col = 'cyan'
             else:
@@ -81,16 +81,22 @@ def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=Non
 
 def show_shortest(dep, dest):
     network = TramNetwork.read_tram_network()
-    time, time_path = network.transition_time(dep, dest)
-    distance, geo_path = network.transition_distance(dep, dest)
-    network_graphviz(network, SHORTEST_PATH_SVG, time_path, geo_path)
+    time_path, time = network.transition(dep, dest, cost=lambda u, v: network.get_weight(u, v),
+                                         transition_cost=10)
+    geo_path, distance = network.transition(dep, dest, cost=lambda u, v: network.geo_distance(u[0], v[0]),
+                                            transition_cost=20)
+    network_graphviz(network, SHORTEST_PATH_SVG, format_path(time_path), format_path(geo_path))
     return format(time_path, 'quickest'), format(geo_path, 'shortest')
 
+
+def format_path(path):
+    stops = list(path.values())[0]
+    return [stop[0].name for stop in stops]
 
 def format(path, label):
     stops = []
     for stop in list(path.values())[0]:
-        stop = stop.name.title()
+        stop = stop[0].name.title()
         stops.append(stop)
     path_string = f"{label.title()}: {' - '.join(stops)}"
     return path_string

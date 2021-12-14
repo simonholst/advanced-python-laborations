@@ -1,6 +1,6 @@
 import math
 from math import pi, sqrt, cos
-from .graphs import WeightedGraph, dijkstra
+from .graphs import WeightedGraph, dijkstra, dijkstra_with_lines
 import sys
 import os
 import json
@@ -142,14 +142,18 @@ class TramNetwork(WeightedGraph):
 
     def __add_vertices(self):
         for stop in self.tram_stop_dict.values():
-            self.add_vertex(stop)
+            for line in stop.line_list:
+                self.add_vertex((stop, line))
 
     def __add_edges(self, network):
         for stop, destinations in network['times'].items():
             stop = self.tram_stop_dict[stop]
-            destinations = [self.tram_stop_dict[d] for d in destinations]
-            for destination in destinations:
-                self.add_edge(stop, destination, network['times'][stop.name][destination.name])
+            for line in stop.line_list:
+                destinations = [self.tram_stop_dict[d] for d in destinations]
+                for destination in destinations:
+                    if line in destination.line_list:
+                        self.add_edge((stop, line), (destination, line), weight=network['times'][stop.name][destination.name])
+
 
     def all_lines(self) -> list:
         return list(self.tram_line_dict.values())
@@ -189,23 +193,20 @@ class TramNetwork(WeightedGraph):
         else:
             return a.position['lat'], a.position['lon']
 
-    def transition_time(self, a, b):
-        time = 0
+    def transition(self, a, b, cost=lambda u, v: 1, transition_cost=0):
+        paths = []
         a = self.tram_stop_dict[a]
         b = self.tram_stop_dict[b]
-        path = dijkstra(self, a, b, cost=lambda u, v: self.get_weight(u, v))
-        for i in range(len(path[b]) - 1):
-            time += self.get_weight(path[b][i], path[b][i+1])
-        return time, path
+        for source in [v for v in self.vertices if v[0] == a]:
+            for target in [v for v in self.vertices if v[0] == b]:
+                path, time = dijkstra_with_lines(self, source, target, cost=cost,
+                                                 transition_cost=transition_cost)
+                paths.append((path, time))
 
-    def transition_distance(self, a, b):
-        distance = 0
-        a = self.tram_stop_dict[a]
-        b = self.tram_stop_dict[b]
-        path = dijkstra(self, a, b, cost=lambda u, v: self.geo_distance(u, v))
-        for i in range(len(path[b]) - 1):
-            distance += self.geo_distance(path[b][i], path[b][i+1])
-        return distance, path
+        #print(paths)
+        shortest = min(paths, key=lambda x: x[1])
+        print(shortest)
+        return shortest
 
     def extreme_positions(self):
         stops = self.tram_stop_dict.values()
@@ -218,4 +219,3 @@ class TramNetwork(WeightedGraph):
     @classmethod
     def read_tram_network(cls, tram_file=TRAM_FILE):
         return cls(tram_file)
-
