@@ -136,7 +136,7 @@ def dijkstra(graph, source, target=None, cost=lambda u, v: 1):
     return make_path_dict(dist, prev)
 
 
-def dijkstra_with_lines(graph, source, target=None, cost=lambda u, v: 1, transition_cost=0):
+def dijkstra_with_lines(graph, source, target, cost=lambda u, v: 1, transition_cost=0):
     Q = set()
     dist = dict()
     prev = dict()
@@ -153,15 +153,10 @@ def dijkstra_with_lines(graph, source, target=None, cost=lambda u, v: 1, transit
 
         Q.remove(u)
 
-        if target and u == target:
-            print('target found')
+        if u == target:
             return make_path_dict({u: dist[u]}, prev), dist[u]
 
-        flag = False
-        print(graph.neighbours(u))
         for v in [nbr for nbr in graph.neighbours(u) if nbr in Q]:
-            flag = True
-            print(f"Source: {u},     Target: {v}")
             change_cost = 0
             if u[1] != v[1]:
                 change_cost = transition_cost
@@ -170,26 +165,21 @@ def dijkstra_with_lines(graph, source, target=None, cost=lambda u, v: 1, transit
             if alt < dist[v]:
                 dist[v] = alt
                 prev[v] = u
-        if flag:
-            print("Entered loop on previous iteration")
-        else:
-            print("Did not enter loop on previous iteration")
 
-    # return "no path", 0 #make_path_dict(dist, prev)
     raise NotImplemented
 
 
 def make_path_dict(dist, prev):
     res = defaultdict(list)
     for key, value in dist.items():
-        if value != math.inf:
-            k = key
-            while k:
-                if prev[k]:
-                    res[key].append(prev[k])
-                k = prev[k]
-            res[key].reverse()
-            res[key].append(key)
+        if value == math.inf:
+            continue
+        k = key
+        while prev[k]:
+            res[key].append(prev[k])
+            k = prev[k]
+        res[key].reverse()
+        res[key].append(key)
     return dict(res)
 
 # dijkstra(g, g[1], cost=lambda u, v: g.get_weight(u, v))
