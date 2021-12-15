@@ -73,7 +73,7 @@ def show_shortest(dep, dest):
     geo_path, distance = network.transition(dep, dest, cost=lambda u, v: network.geo_distance(u[0], v[0]),
                                             transition_cost=20)
     network_graphviz(network, SHORTEST_PATH_SVG, format_path(time_path), format_path(geo_path))
-    return time_path, geo_path
+    return time_path, geo_path, time, round(distance, 2)
 
 
 def format_path(path):

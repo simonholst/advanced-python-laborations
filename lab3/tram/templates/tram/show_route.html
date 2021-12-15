@@ -4,7 +4,7 @@
     <div class="center">
         <div class="float-container">
             <div class="float-child">
-                Quickest:
+                Quickest ({{time}} minutes):
                 {% if timepath %}
                 <ul>
                     {% for stop in timepath %}
@@ -15,7 +15,7 @@
             </div>
             <div class="float-child">
                 {% if geopath %}
-                Shortest:
+                Shortest ({{distance}} km):
                 <ul>
                     {% for stop in geopath %}
                         <li>{{ stop }}</li>
