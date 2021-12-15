@@ -158,7 +158,6 @@ class TramNetwork(WeightedGraph):
                     if line != otherline:
                         self.add_edge((stop, line), (stop, otherline), weight=0)
 
-
     def all_lines(self) -> list:
         return list(self.tram_line_dict.values())
 

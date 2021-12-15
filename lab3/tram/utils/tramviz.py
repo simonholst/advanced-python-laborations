@@ -1,10 +1,8 @@
 from .trams import TramNetwork
-from .graphs import dijkstra
 import graphviz
-import json
 import os
 from django.conf import settings
-
+from . import html_parser
 # to be defined in Bonus task 1, but already included as mock-up
 # from .trams import specialize_stops_to_lines, specialized_geo_distance, specialized_transition_time
 
@@ -30,20 +28,9 @@ def scaled_position(network):
     return lambda xy: (x_factor * (xy[0] - min_lon), y_factor * (xy[1] - min_lat))
 
 
-# Bonus task 2: redefine this so that it returns the actual traffic information
-import urllib.parse
-
-
-def stop_url(stop):
-    google_url = 'https://www.google.com/search'
-    attrs = urllib.parse.urlencode({'q': f'Gothenburg {stop}'})
-    return f'{google_url}?{attrs}'
-
-
-# You don't probably need to change this
-
 def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=None, positions=scaled_position):
     dot = graphviz.Graph(engine='fdp', graph_attr={'size': '12,12', 'bgcolor': 'transparent'})
+    stop_links = html_parser.get_stop_links(network)
 
     for stop in network.all_stops():
         stop = stop.name
@@ -63,7 +50,7 @@ def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=Non
 
         dot.node(str(stop), label=f'{stop}', shape='rectangle', pos=f"{pos_x},{pos_y}!",
                  fontsize='8pt', width='0.4', height='0.05',
-                 URL=stop_url(stop),
+                 URL=stop_links[stop],
                  fillcolor=col, style='filled')
 
     for line in network.all_lines():

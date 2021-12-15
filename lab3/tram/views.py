@@ -14,9 +14,12 @@ def find_route(request):
         form = RouteForm(request.POST)
         if form.is_valid():
             route = form.data
-            timepath, geopath = show_shortest(route['dep'], route['dest'])
-            timepath = list_names(timepath)
-            geopath = list_names(geopath)
-            return render(request, 'tram/show_route.html',
-                {'dest': form.instance.__str__(), 'timepath': timepath, 'geopath': geopath})
+            try:
+                timepath, geopath = show_shortest(route['dep'].lower(), route['dest'].lower())
+                timepath = list_names(timepath)
+                geopath = list_names(geopath)
+                return render(request, 'tram/show_route.html',
+                              {'dest': form.instance.__str__(), 'timepath': timepath, 'geopath': geopath})
+            except KeyError:
+                pass
     return render(request, 'tram/find_route.html', {'form': form})
