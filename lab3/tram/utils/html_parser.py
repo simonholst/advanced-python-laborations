@@ -35,7 +35,6 @@ def __create_stop_links(stop_classes, network):
         for stop in network.all_stops():
             if f'{stop.name},' in stop_class:
                 link_digits = re.findall(r'\d{16}', stop_class)[0]
-                print(link_digits, stop.name)
                 stop_links[stop.name] = f'{TRAM_STOP_URL_BASE}{link_digits}'
                 continue
     return stop_links

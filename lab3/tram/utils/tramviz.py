@@ -48,7 +48,7 @@ def network_graphviz(network, outfile, time_path=None, geo_path=None, colors=Non
             else:
                 col = 'green'
 
-        dot.node(str(stop), label=f'{stop}', shape='rectangle', pos=f"{pos_x},{pos_y}!",
+        dot.node(str(stop), label=f'{stop}', shape='rectangle', pos=f"{pos_y},{pos_x}",
                  fontsize='8pt', width='0.4', height='0.05',
                  URL=stop_links[stop],
                  fillcolor=col, style='filled')
