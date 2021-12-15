@@ -1,0 +1,32 @@
+{% extends "tram/base.html" %}
+{% block content %}
+    <h1>{{ route }}</h1>
+    <div class="center">
+        <div class="float-container">
+            <div class="float-child">
+                Quickest:
+                {% if timepath %}
+                <ul>
+                    {% for stop in timepath %}
+                        <li>{{ stop }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            <div class="float-child">
+                {% if geopath %}
+                Shortest:
+                <ul>
+                    {% for stop in geopath %}
+                        <li>{{ stop }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+
+        </div>
+
+        {% include './images/shortest_path.svg' %}
+    </div>
+
+{% endblock content %}

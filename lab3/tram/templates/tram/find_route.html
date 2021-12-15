@@ -1,0 +1,29 @@
+{% extends "tram/base.html" %}
+{% block content %}
+<div>
+<!--    <h1>Find Route</h1>-->
+<!--        <form method="POST" class="post-form">{% csrf_token %}-->
+<!--                {{ form.as_p }}-->
+<!--                <button type="submit">Search</button>-->
+<!--        </form>-->
+
+    <div class="center">
+        <h1 class="center-text">Find Route</h1>
+    </div>
+        <form method="POST">{% csrf_token %}
+            <div class="form-box-center">
+                <div id="wrapper">
+                <div id="left">
+                    <p><label for="id_dep"></label> <input type="text" name="dep" placeholder="From:" maxlength="200" required id="id_dep"></p>
+                </div>
+                <div id="right">
+                    <p><label for="id_dest"></label> <input type="text" name="dest" placeholder="To:" maxlength="200" required id="id_dest"></p>
+                </div>
+            </div>
+            <button type="submit" class="center">Search</button>
+            </div>
+
+        </form>
+</div>
+
+{% endblock content %}
