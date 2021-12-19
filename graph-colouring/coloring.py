@@ -14,8 +14,6 @@ def simplify(graph, n=4):
                 dq.appendleft(vertex)
                 graph.remove_vertex(vertex)
                 break
-            else:
-                print(graph.neighbours(vertex))
     return dq
 
 
